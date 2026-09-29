@@ -68,21 +68,21 @@
 
             <div class="section-title">
                 <h2>Family Dental Care</h2>
-                <p>{!! html_entity_decode($tentang -> informasi_umum) !!}</p>
+                <p>{!! html_entity_decode($tentang?->informasi_umum ?? '') !!}</p>
             </div>
 
             <div class="row">
                 <div class="col-lg-6" data-aos="fade-right">
-                    <img src="{{ asset('main/img/logo/'.$tentang -> foto_sampul) }}" class="img-fluid" alt="" height="100%" width="100%">
+                    <img src="{{ asset('main/img/logo/'.($tentang?->foto_sampul ?? '')) }}" class="img-fluid" alt="" height="100%" width="100%">
                 </div>
                 <div class="col-lg-6 pt-4 pt-lg-0 content" data-aos="fade-left">
                     <h3>Visi</h3>
                     <p class="fst-italic">
-                        {!! html_entity_decode($tentang -> visi) !!}
+                        {!! html_entity_decode($tentang?->visi ?? '') !!}
                     </p>
                     <h3>Misi</h3>
                     <ul>
-                        {!! html_entity_decode($tentang -> misi) !!}
+                        {!! html_entity_decode($tentang?->misi ?? '') !!}
                     </ul>
                 </div>
             </div>

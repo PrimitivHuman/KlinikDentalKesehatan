@@ -49,24 +49,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (count($category) === 0 || Session::has('message'))
+                    @if ($category->isEmpty() || Session::has('message'))
                     <tr>
                         <td colspan="4" class="text-center">Tidak Ada Data!</td>
                     </tr>
                     @else
                     @foreach ($category as $data)
                     <tr>
-                        <th scope="row">{{ $loop -> iteration }}</th>
-                        <td>{{ $data -> id_kategori }}</td>
-                        <td>{{ $data -> nama_kategori }}</td>
+                        <th scope="row">{{ $loop->iteration }}</th>
+                        <td>{{ $data->id_kategori }}</td>
+                        <td>{{ $data->nama_kategori }}</td>
                         <td>
-                            <a class="btn btn-sm btn-secondary" href="/admin-area/kategori-galeri/detail/{{ Crypt::encrypt($data -> id_kategori); }}">
+                            <a class="btn btn-sm btn-secondary" href="/admin-area/kategori-galeri/detail/{{ Crypt::encrypt($data->id_kategori) }}">
                                 <span class="align-middle">Detail</span>
                             </a>
-                            <a class="btn btn-sm btn-primary" href="/admin-area/kategori-galeri/edit/{{ Crypt::encrypt($data -> id_kategori) }}">
+                            <a class="btn btn-sm btn-primary" href="/admin-area/kategori-galeri/edit/{{ Crypt::encrypt($data->id_kategori) }}">
                                 <span class="align-middle">Edit</span>
                             </a>
-                            <button onclick="if (confirm('Hapus kategori {{ $data -> nama_kategori }}')) { location.replace('/admin-area/kategori-galeri/delete/{{ Crypt::encrypt($data -> id_kategori) }}') }" class="btn btn-danger btn-sm">
+                            <button onclick="if (confirm('Hapus kategori {{ addslashes($data->nama_kategori) }}')) { location.replace('/admin-area/kategori-galeri/delete/{{ Crypt::encrypt($data->id_kategori) }}') }" class="btn btn-danger btn-sm">
                                 <i class="align-middle" data-feather="trash-2"></i>
                                 <span class="align-middle">Hapus</span>
                             </button>

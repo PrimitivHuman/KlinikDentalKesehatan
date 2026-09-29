@@ -7,6 +7,19 @@ define('LARAVEL_START', microtime(true));
 
 /*
 |--------------------------------------------------------------------------
+| Suppress PHP 8.4 Deprecated Notices
+|--------------------------------------------------------------------------
+|
+| Laravel 8 was not built for PHP 8.4. These deprecated notices come from
+| vendor files and do not affect functionality. We suppress them here to
+| keep the browser output clean.
+|
+*/
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
+/*
+|--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
 |--------------------------------------------------------------------------
 |

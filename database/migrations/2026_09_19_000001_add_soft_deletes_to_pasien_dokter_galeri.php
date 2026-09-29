@@ -17,21 +17,21 @@ class AddSoftDeletesToPasienDokterGaleri extends Migration
     public function up()
     {
         // Tambah soft delete ke tabel pasien
-        if (!Schema::hasColumn('pasien', 'deleted_at')) {
+        if (Schema::hasTable('pasien') && !Schema::hasColumn('pasien', 'deleted_at')) {
             Schema::table('pasien', function (Blueprint $table) {
                 $table->softDeletes();
             });
         }
 
         // Tambah soft delete ke tabel dokter
-        if (!Schema::hasColumn('dokter', 'deleted_at')) {
+        if (Schema::hasTable('dokter') && !Schema::hasColumn('dokter', 'deleted_at')) {
             Schema::table('dokter', function (Blueprint $table) {
                 $table->softDeletes();
             });
         }
 
         // Tambah soft delete ke tabel galeri
-        if (!Schema::hasColumn('galeri', 'deleted_at')) {
+        if (Schema::hasTable('galeri') && !Schema::hasColumn('galeri', 'deleted_at')) {
             Schema::table('galeri', function (Blueprint $table) {
                 $table->softDeletes();
             });
