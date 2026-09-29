@@ -50,30 +50,13 @@
                     <p class="card-text">
                         {!! html_entity_decode($data -> judul) !!}
                     </p>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="text-start">
-                                <p class="card-text">Aksi</p>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-end">
-                                <div class="btn-group btn-group-sm mb-4 text-right" role="group"
-                                    aria-label="Small button group">
-                                    <a href="/admin-area/galeri/edit/{{ Crypt::encrypt($data -> id_galeri) }}"
-                                        class="btn btn-primary">
-                                        <i class="align-middle" data-feather="edit"></i>
-                                        <span class="align-middle">Edit</span>
-                                    </a>
-                                    <button
-                                        onclick="if (confirm('Hapus foto {{ $data -> id_galeri }}')) { location.replace('/admin-area/galeri/delete/{{ Crypt::encrypt($data -> id_galeri) }}') }"
-                                        class="btn btn-danger">
-                                        <i class="align-middle" data-feather="trash-2"></i>
-                                        <span class="align-middle">Hapus</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                        <a href="/admin-area/galeri/edit/{{ Crypt::encrypt($data->id_galeri) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bx bx-edit-alt"></i> Edit
+                        </a>
+                        <a href="/admin-area/galeri/delete/{{ Crypt::encrypt($data->id_galeri) }}" onclick="return confirm('Hapus foto {{ $data->id_galeri }}?')" class="btn btn-sm btn-outline-danger">
+                            <i class="bx bx-trash"></i> Hapus
+                        </a>
                     </div>
                 </div>
             </div>

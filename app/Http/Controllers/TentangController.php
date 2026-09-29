@@ -7,13 +7,22 @@ use App\Models\Tentang;
 
 class TentangController extends Controller
 {
+    /**
+     * Mengubah foto sampul halaman "Tentang Klinik".
+     * P1-Fix: Tambah validasi tipe & ukuran file gambar.
+     */
     public function photo_edit(Request $request) {
         $img = $request->foto;
 
         if ($img != null) {
+            // P1: Validasi tipe dan ukuran file
+            $request->validate([
+                'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
+            ]);
+
             Tentang::deleteImage($request->foto_old);
 
-            $imgext = $request->foto->extension();
+            $imgext  = $request->foto->extension();
             $imgname = 'about.'.$imgext;
 
             $request->merge([
@@ -21,7 +30,7 @@ class TentangController extends Controller
             ]);
 
             $validated = $request->validate([
-                'foto_sampul' => 'required'
+                'foto_sampul' => 'required',
             ]);
 
             $img->move(public_path('/main/img/logo'), $imgname);
@@ -38,9 +47,12 @@ class TentangController extends Controller
         }
     }
 
+    /**
+     * Mengubah deskripsi/informasi umum klinik.
+     */
     public function informasi_edit(Request $request) {
         $validated = $request->validate([
-            'informasi_umum' => 'required'
+            'informasi_umum' => 'required',
         ]);
 
         $query = Tentang::where('id_tentang', 'TG-001')->update($validated);
@@ -52,9 +64,12 @@ class TentangController extends Controller
         }
     }
 
+    /**
+     * Mengubah pernyataan visi klinik.
+     */
     public function visi_edit(Request $request) {
         $validated = $request->validate([
-            'visi' => 'required'
+            'visi' => 'required',
         ]);
 
         $query = Tentang::where('id_tentang', 'TG-001')->update($validated);
@@ -66,9 +81,12 @@ class TentangController extends Controller
         }
     }
 
+    /**
+     * Mengubah pernyataan misi klinik.
+     */
     public function misi_edit(Request $request) {
         $validated = $request->validate([
-            'misi' => 'required'
+            'misi' => 'required',
         ]);
 
         $query = Tentang::where('id_tentang', 'TG-001')->update($validated);
@@ -80,15 +98,18 @@ class TentangController extends Controller
         }
     }
 
+    /**
+     * Mengubah tugas pokok dan fungsi (tupoksi) klinik.
+     */
     public function tupoksi_edit(Request $request) {
         $validated = $request->validate([
-            'tupoksi' => 'required'
+            'tupoksi' => 'required',
         ]);
 
         $query = Tentang::where('id_tentang', 'TG-001')->update($validated);
 
         if ($query == true) {
-            return redirect('/admin-area/informasi-umum')->with('success', 'Data tugas pokok dan fungsi  berhasil diubah.');
+            return redirect('/admin-area/informasi-umum')->with('success', 'Data tugas pokok dan fungsi berhasil diubah.');
         } else {
             return redirect('/admin-area/informasi-umum')->with('error', 'Terdapat kesalahan dalam mengedit data tugas pokok dan fungsi.');
         }

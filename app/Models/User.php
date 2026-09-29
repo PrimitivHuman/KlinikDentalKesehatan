@@ -13,14 +13,12 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $primaryKey = 'id';
-    protected $keyType = 'string';
-    
+    protected $keyType    = 'string';
+
     public $incrementing = false;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Atribut yang dapat diisi secara massal.
      */
     protected $fillable = [
         'id',
@@ -28,12 +26,11 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_pict',
+        'role', // P3: Kolom role (admin | operator)
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
+     * Atribut yang disembunyikan saat serialisasi.
      */
     protected $hidden = [
         'password',
@@ -41,48 +38,47 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Atribut yang di-cast ke tipe tertentu.
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public static function generateID() {
-        $id = User::selectRaw('RIGHT (id, 3) AS id')->orderBy('id', 'desc')->limit(1)->get();
+    /**
+     * Menghasilkan ID unik untuk akun admin dengan format AK-001.
+     * P2-Fix: Gunakan regex untuk ekstraksi angka agar format konsisten (3 digit, zero-padded).
+     *
+     * @return string Contoh: AK-001, AK-002, AK-010
+     */
+    public static function generateID(): string
+    {
+        $lastId = User::max('id');
 
-        $count = count($id);
-
-        if ($count != null) {
-            $idn = $id[0] -> id;
-
-            $a = substr($idn, -3);
-
-            $f = $a+1;
-
-            $final = "AK-".$f;
+        if ($lastId) {
+            // Ekstrak bagian angka dari akhir ID (misal: "AK-001" → 1, "AK-010" → 10)
+            preg_match('/\d+$/', $lastId, $matches);
+            $num = isset($matches[0]) ? (int) $matches[0] : 0;
         } else {
-            $final = "AK-1";
+            $num = 0;
         }
 
-        return $final;
+        return 'AK-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
     }
 
-    public static function deleteImage($id) {
-        $id = User::where('id', $id)->get();
+    /**
+     * Menghapus file foto profil dari storage berdasarkan ID user.
+     *
+     * @param string $id ID user
+     */
+    public static function deleteImage(string $id): void
+    {
+        $user = User::where('id', $id)->first();
 
-        $count = count($id);
-
-        if ($count != null) {
-            $img = (String) $id[0] -> profile_pict;
-            $filepath = public_path('/img/account/'.$img);
-            //dd($id);
-            if (file_exists($filepath) == 1) {
+        if ($user && !empty($user->profile_pict)) {
+            $filepath = public_path('/img/account/' . $user->profile_pict);
+            if (file_exists($filepath)) {
                 unlink($filepath);
             }
-         }
-     }
-
-
+        }
+    }
 }

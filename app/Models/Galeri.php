@@ -4,15 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Galeri extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes; // P3: SoftDeletes agar data tidak terhapus permanen
 
-    protected $table = 'galeri';
+    protected $table      = 'galeri';
     protected $primaryKey = 'id_galeri';
-    protected $keyType = 'string';
+    protected $keyType    = 'string';
 
     protected $fillable = [
         'id_galeri',
@@ -22,72 +23,80 @@ class Galeri extends Model
         'images',
         'nama_kategori',
     ];
-    
+
     public $incrementing = false;
-    public $timestamps = false;
+    public $timestamps   = false;
 
-    public static function vgaleri() {
-        $query = DB::table('galeri');
-        return $query;
+    /**
+     * Query builder untuk tabel galeri (DB facade).
+     */
+    public static function vgaleri()
+    {
+        return DB::table('galeri');
     }
 
-    public static function kategori() {
-        $query = DB::table('kategori');
-        return $query;
+    /**
+     * Query builder untuk tabel kategori (DB facade).
+     */
+    public static function kategori()
+    {
+        return DB::table('kategori');
     }
 
-    public static function deleteImage($id) {
-        $id = Galeri::where('id_galeri', $id)->get();
+    /**
+     * Menghapus file gambar galeri dari storage.
+     *
+     * @param string $id ID galeri
+     */
+    public static function deleteImage(string $id): void
+    {
+        $item = Galeri::where('id_galeri', $id)->first();
 
-        $count = count($id);
-
-        if ($count != null) {
-            $img = (String) $id[0] -> images;
-            $filepath = public_path('/img/gallery/'.$img);
+        if ($item && !empty($item->images)) {
+            $filepath = public_path('/img/gallery/' . $item->images);
             if (file_exists($filepath)) {
                 unlink($filepath);
             }
         }
     }
 
-    //Generate Automatic ID : Gallery
-    public static function galleryGenerateID() {
-        $id = Galeri::selectRaw('RIGHT (id_galeri, 3) AS id_galeri')->orderBy('id_galeri', 'desc')->limit(1)->get();
+    /**
+     * Menghasilkan ID unik untuk galeri dengan format GL-001.
+     * P2-Fix: Format konsisten 3 digit, zero-padded menggunakan regex + str_pad.
+     *
+     * @return string Contoh: GL-001, GL-002, GL-010
+     */
+    public static function galleryGenerateID(): string
+    {
+        $lastId = Galeri::max('id_galeri');
 
-        $count = count($id);
-
-        if ($count != null) {
-            $idn = $id[0] -> id_galeri;
-
-            $a = substr($idn, -3);
-
-            $f = $a+1;
-
-            $final = "GL-".$f;
+        if ($lastId) {
+            preg_match('/\d+$/', $lastId, $matches);
+            $num = isset($matches[0]) ? (int) $matches[0] : 0;
         } else {
-            $final = "GL-1";
+            $num = 0;
         }
 
-        return $final;
+        return 'GL-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
     }
 
-    public static function categoryGenerateID() {
-        $id = Galeri::kategori()->selectRaw('RIGHT (id_kategori, 3) AS id_kategori')->orderBy('id_kategori', 'desc')->limit(1)->get();
+    /**
+     * Menghasilkan ID unik untuk kategori galeri dengan format KT-001.
+     * P2-Fix: Format konsisten 3 digit, zero-padded.
+     *
+     * @return string Contoh: KT-001, KT-002, KT-010
+     */
+    public static function categoryGenerateID(): string
+    {
+        $lastId = Galeri::kategori()->max('id_kategori');
 
-        $count = count($id);
-
-        if ($count != null) {
-            $idn = $id[0] -> id_kategori;
-
-            $a = substr($idn, -3);
-
-            $f = $a+1;
-
-            $final = "KT-".$f;
+        if ($lastId) {
+            preg_match('/\d+$/', $lastId, $matches);
+            $num = isset($matches[0]) ? (int) $matches[0] : 0;
         } else {
-            $final = "KT-1";
+            $num = 0;
         }
 
-        return $final;
+        return 'KT-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
     }
 }

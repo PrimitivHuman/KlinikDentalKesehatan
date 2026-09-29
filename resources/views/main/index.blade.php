@@ -178,16 +178,20 @@
 
             <div class="row">
                 @foreach ($dokter as $data)
-                <div class="col-lg-3 col-md-6 d-flex align-items">
-                    <div class="member" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-lg-3 col-md-6 d-flex align-items-stretch mb-4">
+                    <div class="member w-100 d-flex flex-column" data-aos="fade-up" data-aos-delay="100">
                         <div class="member-img">
-                            <img src="{{ asset('img/dokter/'.$data -> images) }}" class="img-fluid">
+                            <img src="{{ asset('img/dokter/'.$data->images) }}" class="img-fluid" alt="{{ $data->nama_dokter }}">
                         </div>
-                        <div class="member-info">
-                            <h4>{{ $data -> nama_dokter }}</h4>
-                            <p>----------------------------------------</p>
-                            <h4>Jadwal : {{ $data -> jadwal_dokter }}</h4>
-                            <span> </span>
+                        <div class="member-info d-flex flex-column flex-grow-1 justify-content-between">
+                            <div>
+                                <h4>{{ $data->nama_dokter }}</h4>
+                                <span class="badge bg-light text-secondary mt-1 mb-2">{{ $data->sip_dokter && $data->sip_dokter !== '0' ? 'SIP: '.$data->sip_dokter : 'Dokter Spesialis' }}</span>
+                            </div>
+                            <div class="pt-2 border-top mt-2">
+                                <small class="text-muted d-block fw-bold mb-1"><i class="fas fa-clock text-info me-1"></i> Jadwal Praktik:</small>
+                                <span class="small text-dark">{{ $data->jadwal_dokter ?? '-' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -202,14 +206,19 @@
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
-                <h2>Gallery</h2>
-
+                <h2>Galeri Foto & Perawatan</h2>
+                <p>Dokumentasi hasil perawatan dan fasilitas pelayanan di Klinik FAM Dental Care.</p>
             </div>
             <div class="gallery-slider swiper">
-                <div class="swiper-wrapper align-items-center">
+                <div class="swiper-wrapper align-items-stretch">
                     @foreach ($galeri as $data)
-                    <div class="swiper-slide"><a class="gallery-lightbox"><img src="{{ asset('/img/gallery/'.$data -> images) }}" class="img-fluid" alt=""></a>
-                        <h4>{{ $data -> judul }}</h4>
+                    <div class="swiper-slide">
+                        <div class="gallery-item">
+                            <a href="{{ asset('/img/gallery/'.$data->images) }}" class="gallery-lightbox">
+                                <img src="{{ asset('/img/gallery/'.$data->images) }}" class="img-fluid" alt="{{ strip_tags($data->judul) }}">
+                            </a>
+                            <h5 class="gallery-title">{!! html_entity_decode($data->judul) !!}</h5>
+                        </div>
                     </div>
                     @endforeach
                 </div>
@@ -223,56 +232,56 @@
 
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact">
-        <div class="container">
+        <div class="container" data-aos="fade-up">
 
             <div class="section-title">
-                <h2>Location & Contact</h2>
+                <h2>Lokasi & Kontak Klinik</h2>
+                <p>Kunjungi alamat klinik kami atau hubungi tim customer service kami untuk informasi dan reservasi.</p>
             </div>
 
-        </div>
+            <div class="mb-4 rounded-3 overflow-hidden shadow-sm" style="border: 1px solid #e2f2f3;">
+                <iframe style="border:0; width: 100%; height: 380px; display: block;" src="https://maps.google.com/maps?q=family%20dental%20care%20leuwi%20panjang%20bandung&t=&z=15&ie=UTF8&iwloc=&output=embed" frameborder="0" allowfullscreen></iframe>
+            </div>
 
-        <div>
-            <iframe style="border:0; width: 100%; height: 350px;" src="https://maps.google.com/maps?q=family%20dental%20care&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" allowfullscreen></iframe>
-        </div>
-
-        <div class="container">
-
-            <div class="row mt-5">
-
-                <div class="col-lg">
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="info-box">
-                                <i class="bx bx-map"></i>
-                                <h3>Our Address</h3>
-                                <p>Jl. Leuwi Panjang No.52a, Situsaeur, Kec. Bojongloa Kidul, Kota Bandung, Jawa Barat
-                                    40234</p>
-                                <a href="https://www.google.com/maps/dir//Jl.+Leuwi+Panjang+No.52a,+Situsaeur,+Kec.
-                                +Bojongloa+Kidul,+Kota+Bandung,+Jawa+Barat+40234/@-6.9407825,107.5264023,12z/data
-                                =!4m8!4m7!1m0!1m5!1m1!1s0x2e68e8bd6cd8c397:0x1d7b143e603986b2!2m2!1d107.5964429!2d-6.9407876" class="appointment-btn scrollto"><span class="d-none d-md-inline">G</span>O</a>
-    
-                            </div>
+            <div class="row g-4 mt-2">
+                <div class="col-lg-4 col-md-6">
+                    <div class="info-box d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="bx bx-map"></i>
+                            <h3>Alamat Klinik</h3>
+                            <p>Jl. Leuwi Panjang No.52a, Situsaeur, Kec. Bojongloa Kidul, Kota Bandung, Jawa Barat 40234</p>
                         </div>
-                        <div class="col-md-6">
-                            <div class="info-box mt-4">
-                                <i class="bx bx-envelope"></i>
-                                <h3>Email Us</h3>
-                                <p>fdcbandung52@gmail.com</p>
-                                <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSKjRPhcjXNgQSrlzQFQbNqrzTmTGWfWwWQkRngtPVlQsNnkXTBWbsxGrmVgTxjRcRnSFWJJ" class="appointment-btn scrollto"><span class="d-none d-md-inline">G</span>O</a>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-box mt-4">
-                                <i class="bx bx-phone-call"></i>
-                                <h3>Call Us</h3>
-                                <p>085266379191</p>
-                            </div>
-                        </div>
+                        <a href="https://maps.google.com/?q=Jl.+Leuwi+Panjang+No.52a,+Bandung" target="_blank" class="btn btn-outline-primary btn-contact">
+                            <i class="bx bx-navigation"></i> Buka Google Maps
+                        </a>
                     </div>
-
                 </div>
 
+                <div class="col-lg-4 col-md-6">
+                    <div class="info-box d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="bx bx-envelope"></i>
+                            <h3>Email Resmi</h3>
+                            <p>fdcbandung52@gmail.com</p>
+                        </div>
+                        <a href="mailto:fdcbandung52@gmail.com" class="btn btn-outline-primary btn-contact">
+                            <i class="bx bx-mail-send"></i> Kirim Email
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+                    <div class="info-box d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="bx bxl-whatsapp"></i>
+                            <h3>WhatsApp & Telepon</h3>
+                            <p>0852-6637-9191</p>
+                        </div>
+                        <a href="https://wa.me/6285266379191?text=Halo%20Klinik%20FAM%20Dental%20Care,%20saya%20ingin%20bertanya%20mengenai%20pelayanan%20dan%20reservasi" target="_blank" class="btn btn-success btn-contact">
+                            <i class="bx bxl-whatsapp"></i> Chat WhatsApp
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>

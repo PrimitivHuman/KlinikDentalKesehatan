@@ -1269,6 +1269,18 @@ section {
 .doctors .member .member-img {
   position: relative;
   overflow: hidden;
+  height: 280px;
+  background-color: #f4fbfb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doctors .member .member-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .doctors .member .social {
@@ -1341,6 +1353,45 @@ section {
 --------------------------------------------------------------*/
 .gallery {
   overflow: hidden;
+  padding: 60px 0;
+  background: #f8fcfc;
+}
+
+.gallery .gallery-slider {
+  padding: 10px 5px 40px 5px;
+}
+
+.gallery .gallery-item {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2f2f3;
+  transition: all 0.3s ease-in-out;
+}
+
+.gallery .gallery-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(63, 187, 192, 0.2);
+  border-color: #3fbbc0;
+}
+
+.gallery .gallery-item img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.gallery .gallery-item .gallery-title {
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  text-align: center;
+  background: #fff;
 }
 
 .gallery .swiper-pagination {
@@ -1351,32 +1402,16 @@ section {
 .gallery .swiper-pagination .swiper-pagination-bullet {
   width: 12px;
   height: 12px;
-  background-color: #fff;
+  background-color: #d1eded;
   opacity: 1;
   border: 1px solid #3fbbc0;
+  transition: all 0.3s ease;
 }
 
 .gallery .swiper-pagination .swiper-pagination-bullet-active {
   background-color: #3fbbc0;
-}
-
-.gallery .swiper-slide-active {
-  text-align: center;
-}
-
-@media (min-width: 992px) {
-  .gallery .swiper-wrapper {
-    padding: 40px 0;
-  }
-
-  .gallery .swiper-slide-active {
-    border: 6px solid #3fbbc0;
-    padding: 4px;
-    background: #fff;
-    z-index: 1;
-    transform: scale(1.2);
-    margin-top: 10px;
-  }
+  width: 24px;
+  border-radius: 6px;
 }
 
 /*--------------------------------------------------------------
@@ -1560,30 +1595,77 @@ section {
 .contact .info-box {
   color: #444444;
   text-align: center;
-  box-shadow: 0 0 20px rgba(214, 215, 216, 0.5);
-  padding: 20px 0 30px 0;
+  box-shadow: 0 4px 20px rgba(63, 187, 192, 0.08);
+  padding: 30px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2f2f3;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
 }
 
-.contact .info-box i {
+.contact .info-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(63, 187, 192, 0.18);
+  border-color: #3fbbc0;
+}
+
+.contact .info-box > i {
   font-size: 32px;
   color: #3fbbc0;
   border-radius: 50%;
-  padding: 8px;
-  border: 2px dotted #c5ebec;
+  padding: 14px;
+  background: #f0f9f9;
+  border: 1px solid #c5ebec;
+  margin-bottom: 12px;
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  line-height: 32px;
+}
+
+.contact .info-box a.btn i {
+  font-size: 16px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  line-height: 1 !important;
+  color: inherit !important;
+}
+
+.contact .info-box .btn-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 22px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.contact .info-box .btn-contact i {
+  margin-right: 6px !important;
 }
 
 .contact .info-box h3 {
-  font-size: 20px;
-  color: #777777;
+  font-size: 18px;
+  color: #333333;
   font-weight: 700;
-  margin: 10px 0;
+  margin: 10px 0 8px 0;
 }
 
 .contact .info-box p {
   padding: 0;
   line-height: 24px;
   font-size: 14px;
-  margin-bottom: 0;
+  color: #666666;
+  margin-bottom: 15px;
 }
 
 .contact .php-email-form {

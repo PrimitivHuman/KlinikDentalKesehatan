@@ -2,103 +2,37 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><a href="/admin-area" class="a-breadcrumbs">Beranda</a> / <a href="/admin-area/galeri"
-            class="a-breadcrumbs">Agenda Kegiatan</a> / </span> Data Baru</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><a href="/admin-area" class="a-breadcrumbs">Beranda</a> / <a href="/admin-area/kegiatan" class="a-breadcrumbs">Agenda Kegiatan</a> / </span> Data Baru</h4>
 
-    <div class="mb-3">
-        <i class="text-middle" data-feather="file-plus"></i>
-        <h1 class="h3 d-inline align-middle">Data Informasi Baru</h1>
-    </div>
     <div class="row">
-        <div class="col">
-            <div class="card">
-                <form action="/admin-area/berita/submit" method="POST" enctype="multipart/form-data">
-                    {{ csrf_field() }}
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <h5 class="card-header">Tambah Agenda Kegiatan Baru</h5>
+                <form action="/admin-area/kegiatan/submit" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12">
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label">Judul</label>
-                                        <input type="text" name="judul" class="form-control" required
-                                            placeholder="Judul Gambar" value="{{ old('judul') }}">
-                                        @error('judul')
-                                        <div id="defaultFormControlHelp" class="form-text">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
+                            <div class="mb-3 col-md-8">
+                                <label for="judul_kegiatan" class="form-label">Judul Kegiatan</label>
+                                <input type="text" id="judul_kegiatan" name="judul_kegiatan" class="form-control" required placeholder="Contoh: Bakti Sosial Kesehatan Gigi" value="{{ old('judul_kegiatan') }}">
                             </div>
-                            <div class="col-12 col-md-4 col-lg-4">
-                                <div class="card-body">
-                                    <label class="form-label">Sampul</label>
-                                    <div class="card-body">
-                                        <img src="" alt="preview image" class="d-block rounded img-fluid" id="uploadedAvatar" />
-                                    </div>
-                                </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="tgl_kegiatan" class="form-label">Tanggal Pelaksanaan</label>
+                                <input type="date" id="tgl_kegiatan" name="tgl_kegiatan" class="form-control" required value="{{ old('tgl_kegiatan', date('Y-m-d')) }}">
                             </div>
-                            <div class="col-12 col-md-8 col-lg-8">
-                                <div class="card-body">
-                                    <div class="">
-                                        <label class="form-label">Opsi Unggah</label>
-                                        <div class="button-wrapper">
-                                            <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-                                                <span class="d-none d-sm-block">Pilih Foto</span>
-                                                <i class="bx bx-upload d-block d-sm-none"></i>
-                                                <input name="foto" type="file" id="upload"
-                                                    class="account-file-input" hidden
-                                                    accept="image/png, image/jpeg" value="" />
-                                            </label>
-                                            <button type="button"
-                                                class="btn btn-outline-secondary account-image-reset mb-4">
-                                                <i class="bx bx-reset d-block d-sm-none"></i>
-                                                <span class="d-none d-sm-block">Reset</span>
-                                            </button>
-                                            <p class="text-muted mb-0">Tipe file : .jpg atau .png. Ukuran maks
-                                                800KB</p>
-                                            @error('sampul')
-                                            <div id="defaultFormControlHelp" class="form-text">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="mb-3 col-md-12">
+                                <label for="foto" class="form-label">Foto Dokumentasi Kegiatan</label>
+                                <input type="file" id="foto" name="foto" class="form-control" required accept="image/png, image/jpeg, image/webp">
+                                <small class="text-muted">Format: JPG, PNG, WEBP. Maksimal 2MB.</small>
                             </div>
-                            <div class="col-12">
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label">Isi</label>
-                                        <textarea class="form-control" name="isi" id="summernote">{{ old('isi') }}</textarea>
-                                        @error('isi')
-                                        <div id="defaultFormControlHelp" class="form-text">
-                                            {{ $message }}
-                                        </div>
-                                        @enderror
-                                    </div>
-                                </div>
+                            <div class="mb-3 col-md-12">
+                                <label for="deskripsi_kegiatan" class="form-label">Deskripsi Kegiatan</label>
+                                <textarea name="deskripsi_kegiatan" id="summernote" class="form-control" rows="5" required placeholder="Tuliskan detail kegiatan di sini...">{{ old('deskripsi_kegiatan') }}</textarea>
                             </div>
                         </div>
-                    </div>
-                    <div class=" card-body">
-                        <div class="row">
-                            <div class="col-lg-6 col-sm-6 col-md-6">
-                                <div class="mb-3">
-                                    <div class="text-start">
-                                        <button class="btn btn-primary" type="submit">
-                                            <span class="align-middle">Simpan</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6 col-md-6">
-                                <div class="text-end">
-                                    <a class="btn btn-warning" href="/admin-area/agenda-kegiatan">
-                                        <span class="align-middle">Kembali</span>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary me-2">Simpan Kegiatan</button>
+                            <a href="/admin-area/kegiatan" class="btn btn-outline-secondary">Batal</a>
                         </div>
                     </div>
                 </form>

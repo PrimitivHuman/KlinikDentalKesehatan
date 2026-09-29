@@ -52,13 +52,7 @@
                             <p class="card-text">
                                 {!! html_entity_decode($data -> judul) !!}
                             </p>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="text-start">
-                                        <p class="card-text">Aksi</p>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>

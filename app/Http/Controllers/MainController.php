@@ -31,10 +31,12 @@ class MainController extends Controller
     }
 
     public function appointment() {
+        $dokter = Dokter::all();
 
         return view('main.appointment', [
-            'title' => 'appointment',
-            'menu' => 'appointment',
+            'title'  => 'Form Reservasi Janji Temu',
+            'menu'   => 'appointment',
+            'dokter' => $dokter,
         ]);
     }
                                 

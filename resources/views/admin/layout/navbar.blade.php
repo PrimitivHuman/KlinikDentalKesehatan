@@ -43,7 +43,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="/admin-area/pengaturan">
                             <i class="bx bx-cog me-2"></i>
                             <span class="align-middle">Pengaturan</span>
                         </a>

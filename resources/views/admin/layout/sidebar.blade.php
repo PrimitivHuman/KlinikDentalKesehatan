@@ -4,9 +4,8 @@
     <div class="app-brand demo">
         <a href="/admin-area" class="app-brand-link">
             <span class="app-brand-logo demo" style="width: 100%; height: 100%">
-                <img src="{{ asset('assets/img/logo12.png') }}" alt="?">
+                <img src="{{ asset('assets/img/logo12.png') }}" alt="Klinik FAM">
             </span>
-            <!--<span class="app-brand-text demo menu-text fw-bolder ms-2">IF-Admin</span>-->
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -26,7 +25,7 @@
         </li>
 
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Menu Tentang</span>
+            <span class="menu-header-text">Menu Klinik</span>
         </li>
 
         <li class="menu-item @if ($menu == 'informasi') active @endif">
@@ -43,21 +42,17 @@
             </a>
         </li>
 
-        <li class="menu-item @if (($menu == 'galeri')) active open @endif">
+        <li class="menu-item @if ($menu == 'galeri') active open @endif">
             <a href="/admin-area/galeri" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-image"></i>
                 <div>Galeri</div>
             </a>
         </li>
 
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Menu Admin</span>
-        </li>
-
-        <li class="menu-item @if ($menu == 'pengguna') active @endif">
-            <a href="/admin-area/akun" class="menu-link">
-                <i class='menu-icon tf-icons bx bxs-user-account' ></i>
-                Data Admin
+        <li class="menu-item @if ($menu == 'kegiatan') active @endif">
+            <a href="/admin-area/kegiatan" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-calendar-event"></i>
+                <div>Agenda Kegiatan</div>
             </a>
         </li>
 
@@ -67,8 +62,19 @@
 
         <li class="menu-item @if ($menu == 'pasien') active @endif">
             <a href="/admin-area/pasien" class="menu-link">
-                <i class='menu-icon tf-icons bx bxs-user-account' ></i>
+                <i class='menu-icon tf-icons bx bxs-user-account'></i>
                 Data Pasien
+            </a>
+        </li>
+
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Pengaturan Admin</span>
+        </li>
+
+        <li class="menu-item @if ($menu == 'pengguna') active @endif">
+            <a href="/admin-area/akun" class="menu-link">
+                <i class='menu-icon tf-icons bx bxs-user-detail'></i>
+                Data Admin
             </a>
         </li>
     </ul>

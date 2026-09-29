@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Dokter extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes; // P3: SoftDeletes agar data tidak terhapus permanen
 
-    protected $table = 'dokter';
+    protected $table      = 'dokter';
     protected $primaryKey = 'id_dokter';
-    protected $keyType = 'string';
+    protected $keyType    = 'string';
 
     protected $fillable = [
         'id_dokter',
@@ -24,39 +24,41 @@ class Dokter extends Model
         'str_dokter',
         'sip_dokter',
     ];
-    
+
     public $incrementing = false;
-    public $timestamps = false;
+    public $timestamps   = false;
 
-    //Generate Automatic ID
-    public static function dokterGenerateID() {
-        $id = Dokter::selectRaw('RIGHT (id_dokter, 3) AS id_dokter')->orderBy('id_dokter', 'desc')->limit(1)->get();
+    /**
+     * Menghasilkan ID unik untuk dokter dengan format DOK-001.
+     * P2-Fix: Format konsisten 3 digit, zero-padded menggunakan regex + str_pad.
+     *
+     * @return string Contoh: DOK-001, DOK-002, DOK-010
+     */
+    public static function dokterGenerateID(): string
+    {
+        $lastId = Dokter::max('id_dokter');
 
-        $count = count($id);
-
-        if ($count != null) {
-            $idn = $id[0] -> id_dokter;
-
-            $a = substr($idn, -3);
-
-            $f = $a+1;
-
-            $final = "DOK-".$f;
+        if ($lastId) {
+            preg_match('/\d+$/', $lastId, $matches);
+            $num = isset($matches[0]) ? (int) $matches[0] : 0;
         } else {
-            $final = "DOK-1";
+            $num = 0;
         }
 
-        return $final;
+        return 'DOK-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
     }
 
-    public static function deleteImage($id) {
-        $id = Dokter::where('id_dokter', $id)->get();
+    /**
+     * Menghapus file foto dokter dari storage.
+     *
+     * @param string $id ID dokter
+     */
+    public static function deleteImage(string $id): void
+    {
+        $dokter = Dokter::where('id_dokter', $id)->first();
 
-        $count = count($id);
-
-        if ($count != null) {
-            $img = (String) $id[0] -> images;
-            $filepath = public_path('/img/dokter/'.$img);
+        if ($dokter && !empty($dokter->images)) {
+            $filepath = public_path('/img/dokter/' . $dokter->images);
             if (file_exists($filepath)) {
                 unlink($filepath);
             }

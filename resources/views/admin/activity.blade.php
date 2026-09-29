@@ -2,84 +2,47 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><a href="/admin-area" class="a-breadcrumbs">Beranda</a> /</span> Agenda Kegiatan</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><a href="/admin-area" class="a-breadcrumbs">Beranda</a> /</span> Agenda Kegiatan Klinik</h4>
 
     @include('admin.layout.alert')
-    <div class="row">
+    <div class="row mb-4 align-items-center">
         <div class="col-md-6">
-            <a href="/admin-area/berita/new" class="btn btn-primary btn-sm pl-4">Data Baru</a>
-        </div>
-        <div class="col-md-6">
-            <div class="d-flex flex-row-reverse">
-                <div class="row mb-4">
-                    <div class="col-auto">
-                        <label for="cari" class="col-form-label">Cari Agenda Kegiatan</label>
-                      </div>
-                      <div class="col-auto">
-                        <form action="/admin-area/berita" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="access" readonly value="encrypt('admin')">
-                        <div class="input-group">
-                            <input required type="text" id="cari" class="form-control" name="cari" placeholder="Masukkan keyword...">
-                            <button class="btn btn-outline-primary" type="submit">Cari</button>
-                        </div>
-                        @error('cari')
-                        <div class="form-text">
-                            <i class="ri-error-warning-line"></i>
-                            Masukkan keyword pencarian yang valid.
-                        </div>
-                        @enderror
-                        </form>
-                      </div>
-                </div>
-            </div>
+            <a href="/admin-area/kegiatan/new" class="btn btn-primary btn-sm"><i class="bx bx-plus me-1"></i> Tambah Kegiatan Baru</a>
         </div>
     </div>
+
     <div class="row mb-5">
-        @if (count($activity) == 0 || Session::has('message')) 
+        @if (count($activities) == 0 || Session::has('message')) 
         <div class="card mb-4 text-center">
-            <h5 class="card-header">Data Tidak Ditemukan!</h5>
+            <h5 class="card-header py-5 text-muted">Belum ada agenda kegiatan yang ditambahkan.</h5>
         </div>
         @else 
-        @foreach ($activity as $data)
-        <div class="col-md-6 col-lg-3 mb-3">
-            <div class="card h-100">
-                <img class="card-img-top" src="{{ asset('img/information/'.$data -> sampul) }}" alt="Card image cap" />
-                <div class="card-body">
-                    <h5 class="card-title">{{ $data -> judul}}</h5>
-                    <pre>Upload Date : {{ $data -> tgl_kirim }}</pre>
-                    <p class="card-text limit-chars">
-                        {{ strip_tags($data -> isi) }}
+        @foreach ($activities as $data)
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img class="card-img-top" src="{{ asset('img/activity/'.$data->images) }}" alt="{{ $data->judul_kegiatan }}" style="height: 180px; object-fit: cover;" />
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold text-dark mb-1">{{ $data->judul_kegiatan }}</h5>
+                    <small class="text-muted mb-2"><i class="bx bx-calendar me-1"></i> {{ \Carbon\Carbon::parse($data->tgl_kegiatan)->format('d M Y') }}</small>
+                    <p class="card-text text-muted flex-grow-1">
+                        {{ Str::limit(strip_tags($data->deskripsi_kegiatan), 80) }}
                     </p>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="text-start">
-                                <p class="card-text">Aksi</p>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="text-end">
-                                <div class="btn-group btn-group-sm mb-4 text-right" role="group"
-                                    aria-label="Small button group">
-                                    <a href="/admin-area/berita/edit/{{ Crypt::encrypt($data -> id_berita) }}" class="btn btn-primary">
-                                        <i class="align-middle" data-feather="edit"></i>
-                                        <span class="align-middle">Edit</span>
-                                    </a>
-                                    <button onclick="if (confirm('Hapus data {{ $data -> judul }}')) { location.replace('/admin-area/berita/delete/{{ Crypt::encrypt($data -> id_berita) }}') }" class="btn btn-danger">
-                                        <i class="align-middle" data-feather="trash-2"></i>
-                                        <span class="align-middle">Hapus</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                        <a href="/admin-area/kegiatan/edit/{{ Crypt::encrypt($data->id_kegiatan) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="bx bx-edit-alt"></i> Edit
+                        </a>
+                        <a href="/admin-area/kegiatan/delete/{{ Crypt::encrypt($data->id_kegiatan) }}" onclick="return confirm('Hapus kegiatan {{ $data->judul_kegiatan }}?')" class="btn btn-sm btn-outline-danger">
+                            <i class="bx bx-trash"></i> Hapus
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         @endforeach
-        {{ $activity->links('admin.layout.pagination') }}
+        <div class="col-12 mt-3">
+            {{ $activities->links('admin.layout.pagination') }}
+        </div>
         @endif
     </div>
-    <!-- Examples -->
 </div>
 @endsection
