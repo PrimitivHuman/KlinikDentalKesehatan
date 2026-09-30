@@ -2,136 +2,140 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><a href="/admin-area" class="a-breadcrumbs">Beranda</a> / <a href="/admin-area/dokter"
-        class="a-breadcrumbs">Data Dokter</a> / </span> Dokter Baru</h4>
-    <div class="mb-3">
-        <i class="text-middle" data-feather="file-plus"></i>
-        <h1 class="h3 d-inline align-middle">Form Dokter Baru</h1>
+    <!-- Breadcrumbs & Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <div>
+            <h4 class="fw-bold mb-1 text-dark">Tambah Dokter Baru</h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/admin-area" class="text-muted">Beranda</a></li>
+                    <li class="breadcrumb-item"><a href="/admin-area/dokter" class="text-muted">Data Dokter</a></li>
+                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">Tambah Baru</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="/admin-area/dokter" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1">
+            <i class="bx bx-arrow-back"></i>
+            <span>Kembali</span>
+        </a>
     </div>
+
+    @include('admin.layout.alert')
+
     <div class="row">
-        <div class="col">
-            <div class="card">
+        <div class="col-12 col-xl-10 mx-auto">
+            <div class="card border-0 shadow-sm" style="border-radius: 14px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold text-dark">
+                        <i class="bx bx-user-plus text-primary me-2"></i>Formulir Data Dokter Baru
+                    </h5>
+                </div>
                 <form action="/admin-area/dokter/submit" method="POST" enctype="multipart/form-data">
-                    {{ csrf_field() }}
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Data Umum</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Nama Dokter</label>
-                                    <input type="text" name="nama_dokter" class="form-control" placeholder="Nama Dokter" value="{{ old('nama_dokter') }}" required>
-                                    @error('nama_dokter')
-                                    <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
+                    @csrf
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <!-- Nama Dokter -->
+                            <div class="col-12 col-md-12">
+                                <label class="form-label fw-semibold text-dark">Nama Lengkap & Gelar <span class="text-danger">*</span></label>
+                                <input type="text" name="nama_dokter" class="form-control" placeholder="Contoh: drg. Sarah Jenkins, Sp.KG" 
+                                       value="{{ old('nama_dokter') }}" required>
+                                @error('nama_dokter')
+                                <small class="text-danger"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                @enderror
                             </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Nomer HP</label>
-                                    <input type="text" name="no_hp_dokter" class="form-control" placeholder="08*********" value="{{ old('no_hp_dokter') }}" required>
-                                    @error('no_hp_dokter')
-                                    <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+
+                            <!-- Nomor Telepon -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold text-dark">Nomor Telepon / WhatsApp <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bx bx-phone"></i></span>
+                                    <input type="text" name="no_hp_dokter" class="form-control" placeholder="08xxxxxxxxxx" 
+                                           value="{{ old('no_hp_dokter') }}" required>
                                 </div>
+                                @error('no_hp_dokter')
+                                <small class="text-danger"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                @enderror
                             </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="text" name="email_dokter" class="form-control" placeholder="email" value="{{ old('email_dokter') }}" required>
-                                    @error('email_dokter')
-                                    <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+
+                            <!-- Email -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold text-dark">Alamat Email <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bx bx-envelope"></i></span>
+                                    <input type="email" name="email_dokter" class="form-control" placeholder="dokter@klinikdental.com" 
+                                           value="{{ old('email_dokter') }}" required>
                                 </div>
+                                @error('email_dokter')
+                                <small class="text-danger"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                @enderror
                             </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Jadwal</label>
-                                    <input type="text" name="jadwal_dokter" class="form-control" placeholder="Jadwal" value="{{ old('jadwal_dokter') }}" required>
-                                    @error('jadwal_dokter')
-                                    <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+
+                            <!-- Jadwal Praktik -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold text-dark">Jadwal Praktik Dokter <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bx bx-calendar"></i></span>
+                                    <input type="text" name="jadwal_dokter" class="form-control" placeholder="Contoh: Senin - Kamis (09:00 - 15:00)" 
+                                           value="{{ old('jadwal_dokter') }}" required>
                                 </div>
+                                @error('jadwal_dokter')
+                                <small class="text-danger"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                @enderror
                             </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Surat Tanda Regristasi</label>
-                                    <input type="text" name="str_dokter" class="form-control" placeholder=" " value="{{ old('str_dokter') }}" required>
-                                    @error('str_dokter')
-                                    <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                        {{ $message }}
+
+                            <!-- STR & SIP -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold text-dark">Surat Tanda Registrasi (STR) <span class="text-danger">*</span></label>
+                                <input type="text" name="str_dokter" class="form-control font-monospace" placeholder="Nomor STR aktif" 
+                                       value="{{ old('str_dokter') }}" required>
+                                @error('str_dokter')
+                                <small class="text-danger"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold text-dark">Surat Izin Praktik (SIP) <span class="text-danger">*</span></label>
+                                <input type="text" name="sip_dokter" class="form-control font-monospace" placeholder="Nomor SIP aktif" 
+                                       value="{{ old('sip_dokter') }}" required>
+                                @error('sip_dokter')
+                                <small class="text-danger"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            <!-- Foto Profil -->
+                            <div class="col-12 mt-4 pt-3 border-top">
+                                <label class="form-label fw-semibold text-dark mb-3">Foto Profil Dokter <span class="text-danger">*</span></label>
+                                <div class="d-flex flex-column flex-sm-row align-items-center gap-4 p-3 bg-light rounded-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-sm text-primary fw-bold"
+                                         style="width: 100px; height: 100px; font-size: 2rem; border: 3px solid #fff;" id="previewAvatar">
+                                        <i class="bx bx-user text-muted"></i>
                                     </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Surat Ijin Praktek</label>
-                                    <input type="text" name="sip_dokter" class="form-control" placeholder=" " value="{{ old('sip_dokter') }}" required>
-                                    @error('sip_dokter')
-                                    <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start align-items-sm-center gap-4">
-                                        <img src="../img/avatars/1.png" alt="user-avatar" class="d-block rounded"
-                                            height="100" width="100" id="uploadedAvatar" />
-                                        <div class="button-wrapper">
-                                            <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-                                                <span class="d-none d-sm-block">Unggah Foto</span>
-                                                <i class="bx bx-upload d-block d-sm-none"></i>
-                                                <input name="foto" type="file" id="upload" class="account-file-input" hidden
-                                                    accept="image/png, image/jpeg" />
-                                            </label>
-                                            <button type="button"
-                                                class="btn btn-outline-secondary account-image-reset mb-4">
-                                                <i class="bx bx-reset d-block d-sm-none"></i>
-                                                <span class="d-none d-sm-block">Reset</span>
-                                            </button>
-                                            <p class="text-muted mb-0">Tipe file : .jpg atau .png. Ukuran maks 800KB</p>
-                                            @error('images')
-                                            <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
-                                                {{ $message }}
-                                            </div>
-                                            @enderror
-                                        </div>
+                                    <div class="button-wrapper">
+                                        <label for="upload" class="btn btn-primary btn-sm me-2 mb-2" tabindex="0">
+                                            <i class="bx bx-upload me-1"></i> Unggah Foto
+                                            <input name="foto" type="file" id="upload" class="account-file-input" hidden required
+                                                   accept="image/png, image/jpeg, image/webp" 
+                                                   onchange="if(this.files && this.files[0]) { const reader = new FileReader(); reader.onload = function(e) { document.getElementById('previewAvatar').innerHTML = '<img src=\'' + e.target.result + '\' class=\'rounded-circle object-fit-cover w-100 h-100\'>'; }; reader.readAsDataURL(this.files[0]); }" />
+                                        </label>
+                                        <p class="text-muted small mb-0">Format JPG, PNG, atau WEBP. Ukuran maksimal 2MB.</p>
+                                        @error('foto')
+                                        <small class="text-danger d-block mt-1"><i class="bx bx-error-circle"></i> {{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6 col-sm-6 col-md-6">
-                                <div class="mb-3">
-                                    <div class="text-start">
-                                        <button class="btn btn-primary" type="submit">
-                                            <span class="align-middle">Simpan</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-sm-6 col-md-6">
-                                <div class="text-end">
-                                    <a class="btn btn-warning" href="/admin-area/dokter">
-                                        <span class="align-middle">Kembali</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+
+                    <!-- Footer Buttons -->
+                    <div class="card-footer bg-light border-top py-3 d-flex justify-content-between align-items-center">
+                        <a href="/admin-area/dokter" class="btn btn-outline-secondary">
+                            Batal
+                        </a>
+                        <button class="btn btn-primary d-inline-flex align-items-center gap-1 shadow-sm" type="submit">
+                            <i class="bx bx-plus"></i>
+                            <span>Simpan Dokter</span>
+                        </button>
                     </div>
                 </form>
             </div>

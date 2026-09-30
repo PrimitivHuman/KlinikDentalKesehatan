@@ -30,6 +30,19 @@ class Dokter extends Model
     public $timestamps   = false;
 
     /**
+     * Accessor agar pemanggilan $dokter->nama atau $dokter->name tetap aman.
+     */
+    public function getNamaAttribute(): string
+    {
+        return $this->nama_dokter ?? '';
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->nama_dokter ?? '';
+    }
+
+    /**
      * Menghasilkan ID unik untuk dokter dengan format DOK-001.
      * K2-Fix: Dibungkus DB::transaction() + lockForUpdate() untuk mencegah race condition.
      *

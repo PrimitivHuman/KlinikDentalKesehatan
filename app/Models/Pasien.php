@@ -31,6 +31,19 @@ class Pasien extends Model
     ];
 
     /**
+     * Accessor agar pemanggilan $pasien->nama atau $pasien->name tetap aman.
+     */
+    public function getNamaAttribute(): string
+    {
+        return $this->nama_pasien ?? '';
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->nama_pasien ?? '';
+    }
+
+    /**
      * Format ID Pasien tampilan UI (misal: PSN-001, PSN-002).
      *
      * @return string

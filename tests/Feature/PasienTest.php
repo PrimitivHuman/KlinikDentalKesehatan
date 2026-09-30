@@ -98,4 +98,21 @@ class PasienTest extends TestCase
 
         $response->assertSessionHas('error');
     }
+
+    /**
+     * Test admin bisa mengakses form edit/rekam pasien.
+     */
+    public function test_admin_bisa_akses_halaman_edit_pasien(): void
+    {
+        $admin  = User::factory()->create(['id' => 'AK-001', 'role' => 'admin']);
+        $pasien = Pasien::factory()->create(['nama_pasien' => 'Siti Aminah']);
+
+        $encryptedId = encrypt($pasien->id_pasien);
+
+        $response = $this->actingAs($admin)
+            ->get("/admin-area/pasien/edit/{$encryptedId}");
+
+        $response->assertStatus(200);
+        $response->assertSee('Siti Aminah');
+    }
 }
