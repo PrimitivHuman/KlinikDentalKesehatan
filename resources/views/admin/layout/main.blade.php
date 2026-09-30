@@ -1,25 +1,3 @@
-{{-- @php
-use App\Http\Controllers\AkunController;
-
-AkunController::verify();
-
-$session = decrypt(Session::get('auth'));
-
-//dd($session);
-@endphp
-
-@if ($session === false)
-<script>
-    alert('Terdeteksi akses illegal, silahkan login untuk melanjutkan!');
-    location.replace('/logout');
-</script>
-@elseif ($session === 'not_login')
-<script>
-    alert('Silahkan login untuk melanjutkan.');
-    location.replace('/logout');
-</script>
-@else --}}
-
 <!DOCTYPE html>
 
 <!-- =========================================================
@@ -42,9 +20,9 @@ $session = decrypt(Session::get('auth'));
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>{{ $title }} | Website Administrator Informatika Itenas</title>
+    <title>{{ $title }} | Portal Administrator Klinik FAM Dental Care</title>
 
-    <meta name="description" content="" />
+    <meta name="description" content="Portal Administrasi Resmi Klinik FAM Dental Care Bandung" />
 
     <!-- Favicon -->
     <link href="{{ asset('assets/img/logo.png') }}" rel="icon">
@@ -66,6 +44,9 @@ $session = decrypt(Session::get('auth'));
     <link rel="stylesheet" href="{{ asset('admin/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ asset('admin/css/demo.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/css/style.css') }}" />
+
+    <!-- UI/UX Pro Max Admin Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('admin/css/admin-pro-max.css') }}" />
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />

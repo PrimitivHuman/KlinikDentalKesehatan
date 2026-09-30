@@ -1,0 +1,657 @@
+/**
+ * UI/UX Pro Max - Dental & Healthcare Design System
+ * Inspired by nextlevelbuilder/ui-ux-pro-max-skill
+ * Style: Accessible, Elegant & Minimalist Medical
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  --uipro-font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --uipro-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Primary Palette - Medical Teal & Deep Cyan */
+  --uipro-primary: #0D9488;
+  --uipro-primary-hover: #0F766E;
+  --uipro-primary-light: #F0FDFA;
+  --uipro-primary-tint: #CCFBF1;
+  --uipro-primary-dark: #115E59;
+
+  /* Accent - Trust Blue & Health Green */
+  --uipro-accent: #059669;
+  --uipro-accent-light: #ECFDF5;
+  --uipro-blue: #0284C7;
+  --uipro-blue-light: #F0F9FF;
+
+  /* Surfaces & Backgrounds */
+  --uipro-bg: #F8FAFC;
+  --uipro-surface: #FFFFFF;
+  --uipro-surface-alt: #F1F5F9;
+
+  /* Typography / Text colors */
+  --uipro-text-heading: #0F172A;
+  --uipro-text-body: #334155;
+  --uipro-text-muted: #64748B;
+  --uipro-text-light: #94A3B8;
+
+  /* Borders & Dividers */
+  --uipro-border: #E2E8F0;
+  --uipro-border-light: #F1F5F9;
+  --uipro-border-focus: #14B8A6;
+
+  /* Shadows */
+  --uipro-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --uipro-shadow-md: 0 4px 14px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --uipro-shadow-lg: 0 14px 28px -4px rgba(13, 148, 136, 0.09), 0 6px 12px -2px rgba(15, 23, 42, 0.04);
+  --uipro-shadow-hover: 0 20px 35px -5px rgba(13, 148, 136, 0.12), 0 10px 15px -3px rgba(15, 23, 42, 0.05);
+
+  /* Radii */
+  --uipro-radius-sm: 8px;
+  --uipro-radius-md: 14px;
+  --uipro-radius-lg: 20px;
+  --uipro-radius-pill: 9999px;
+
+  /* Transitions */
+  --uipro-transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Global Reset & Base Typography */
+body {
+  font-family: var(--uipro-font-body) !important;
+  color: var(--uipro-text-body) !important;
+  background-color: var(--uipro-bg) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6,
+.section-title h2,
+.navbar a,
+.btn {
+  font-family: var(--uipro-font-heading) !important;
+  color: var(--uipro-text-heading);
+  letter-spacing: -0.02em;
+}
+
+/* ── Top Bar ───────────────────────────────────────────────────────────── */
+#topbar {
+  background: linear-gradient(135deg, #0F766E, #0D9488) !important;
+  color: #FFFFFF !important;
+  font-size: 13px !important;
+  font-weight: 500;
+  height: 42px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: var(--uipro-transition);
+}
+
+#topbar .btn-outline-light {
+  border-radius: var(--uipro-radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  transition: var(--uipro-transition);
+}
+
+#topbar .btn-outline-light:hover {
+  background: #FFFFFF;
+  color: var(--uipro-primary);
+  border-color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+/* ── Header & Navbar ────────────────────────────────────────────────────── */
+#header {
+  top: 42px;
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04) !important;
+  transition: var(--uipro-transition);
+  padding: 12px 0 !important;
+}
+
+#header.header-scrolled {
+  top: 0 !important;
+  box-shadow: 0 8px 30px -4px rgba(15, 23, 42, 0.08) !important;
+}
+
+.logo img {
+  max-height: 44px !important;
+  border-radius: 8px;
+  transition: var(--uipro-transition);
+}
+
+.navbar a,
+.navbar a:focus {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--uipro-text-body) !important;
+  padding: 8px 16px !important;
+  border-radius: var(--uipro-radius-pill);
+  transition: var(--uipro-transition) !important;
+}
+
+.navbar a:hover,
+.navbar .active,
+.navbar .active:focus,
+.navbar li:hover > a {
+  color: var(--uipro-primary) !important;
+  background-color: var(--uipro-primary-light);
+}
+
+.appointment-btn {
+  background: linear-gradient(135deg, var(--uipro-primary), #0F766E) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 10px 22px !important;
+  border-radius: var(--uipro-radius-pill) !important;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3) !important;
+  border: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--uipro-transition) !important;
+}
+
+.appointment-btn:hover {
+  background: linear-gradient(135deg, #0F766E, #115E59) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+/* ── Hero Section (Minimalist & High-Converting) ────────────────────────── */
+#hero {
+  width: 100%;
+  min-height: 88vh;
+  background: radial-gradient(circle at 80% 20%, rgba(204, 251, 241, 0.5) 0%, rgba(240, 253, 250, 0.3) 40%, #FFFFFF 100%) !important;
+  padding: 140px 0 60px 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#hero::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--uipro-primary-light);
+  border: 1px solid var(--uipro-primary-tint);
+  color: var(--uipro-primary-dark);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-radius: var(--uipro-radius-pill);
+  margin-bottom: 20px;
+  box-shadow: var(--uipro-shadow-sm);
+}
+
+.hero-badge i {
+  color: var(--uipro-primary);
+  font-size: 16px;
+}
+
+.hero-title {
+  font-size: 2.85rem !important;
+  font-weight: 800 !important;
+  line-height: 1.18 !important;
+  color: var(--uipro-text-heading) !important;
+  margin-bottom: 20px;
+}
+
+.hero-title span {
+  background: linear-gradient(135deg, var(--uipro-primary) 0%, #0284C7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  color: var(--uipro-text-muted);
+  line-height: 1.7;
+  margin-bottom: 34px;
+  max-width: 580px;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.btn-hero-primary {
+  background: linear-gradient(135deg, var(--uipro-primary), #0F766E);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: var(--uipro-radius-pill);
+  box-shadow: 0 10px 22px rgba(13, 148, 136, 0.28);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--uipro-transition);
+}
+
+.btn-hero-primary:hover {
+  background: linear-gradient(135deg, #0F766E, #115E59);
+  color: #FFFFFF;
+  box-shadow: 0 14px 28px rgba(13, 148, 136, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-hero-secondary {
+  background: #FFFFFF;
+  color: var(--uipro-text-heading);
+  border: 1px solid var(--uipro-border);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 13px 26px;
+  border-radius: var(--uipro-radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--uipro-transition);
+}
+
+.btn-hero-secondary:hover {
+  background: var(--uipro-surface-alt);
+  color: var(--uipro-primary);
+  border-color: var(--uipro-primary);
+  transform: translateY(-2px);
+}
+
+/* Hero Stats Bar */
+.hero-stats-bar {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--uipro-border);
+  border-radius: var(--uipro-radius-lg);
+  padding: 20px 28px;
+  box-shadow: var(--uipro-shadow-md);
+  margin-top: 15px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--uipro-primary-light);
+  color: var(--uipro-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.stat-num {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--uipro-text-heading);
+  line-height: 1.1;
+  font-family: var(--uipro-font-heading);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--uipro-text-muted);
+  font-weight: 500;
+}
+
+/* ── Section Titles ─────────────────────────────────────────────────────── */
+.section-title {
+  text-align: center;
+  padding-bottom: 40px;
+}
+
+.section-title h2 {
+  font-size: 2.2rem !important;
+  font-weight: 800 !important;
+  color: var(--uipro-text-heading) !important;
+  margin-bottom: 12px !important;
+  position: relative;
+}
+
+.section-title h2::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 4px;
+  background: var(--uipro-primary);
+  border-radius: 2px;
+  margin: 12px auto 0 auto !important;
+}
+
+.section-title p {
+  color: var(--uipro-text-muted) !important;
+  font-size: 1.05rem !important;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ── Services Cards ─────────────────────────────────────────────────────── */
+.services .icon-box {
+  background: var(--uipro-surface) !important;
+  border: 1px solid var(--uipro-border) !important;
+  border-radius: var(--uipro-radius-lg) !important;
+  padding: 34px 28px !important;
+  box-shadow: var(--uipro-shadow-sm) !important;
+  transition: var(--uipro-transition) !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.services .icon-box:hover {
+  border-color: var(--uipro-primary-tint) !important;
+  box-shadow: var(--uipro-shadow-hover) !important;
+  transform: translateY(-5px) !important;
+}
+
+.services .icon-box .icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: var(--uipro-primary-light) !important;
+  color: var(--uipro-primary) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 20px;
+  transition: var(--uipro-transition);
+}
+
+.services .icon-box:hover .icon {
+  background: var(--uipro-primary) !important;
+  color: #FFFFFF !important;
+  transform: scale(1.08);
+}
+
+.services .icon-box .title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 10px;
+}
+
+.services .icon-box .title a {
+  color: var(--uipro-text-heading) !important;
+  transition: var(--uipro-transition);
+}
+
+.services .icon-box .title a:hover {
+  color: var(--uipro-primary) !important;
+}
+
+.services .icon-box .description {
+  color: var(--uipro-text-muted) !important;
+  font-size: 14px;
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+.price-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--uipro-primary-light);
+  color: var(--uipro-primary-dark);
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--uipro-radius-pill);
+  margin-top: 14px;
+  border: 1px solid var(--uipro-primary-tint);
+}
+
+/* ── Doctor Cards ───────────────────────────────────────────────────────── */
+.doctors .member {
+  background: var(--uipro-surface) !important;
+  border: 1px solid var(--uipro-border) !important;
+  border-radius: var(--uipro-radius-lg) !important;
+  overflow: hidden;
+  box-shadow: var(--uipro-shadow-sm) !important;
+  transition: var(--uipro-transition) !important;
+}
+
+.doctors .member:hover {
+  box-shadow: var(--uipro-shadow-hover) !important;
+  transform: translateY(-5px) !important;
+  border-color: var(--uipro-primary-tint) !important;
+}
+
+.doctors .member-img {
+  overflow: hidden;
+  position: relative;
+  background: #F1F5F9;
+  height: 270px;
+}
+
+.doctors .member-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+}
+
+.doctors .member:hover .member-img img {
+  transform: scale(1.05);
+}
+
+.doctors .member-info {
+  padding: 22px !important;
+}
+
+.doctors .member-info h4 {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: var(--uipro-text-heading) !important;
+  margin-bottom: 4px;
+}
+
+.doctors .member-info .sip-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--uipro-primary-dark);
+  background: var(--uipro-primary-light);
+  padding: 3px 10px;
+  border-radius: var(--uipro-radius-pill);
+  display: inline-block;
+  border: 1px solid var(--uipro-primary-tint);
+}
+
+/* ── Gallery Section ────────────────────────────────────────────────────── */
+.gallery-item {
+  background: var(--uipro-surface);
+  border: 1px solid var(--uipro-border);
+  border-radius: var(--uipro-radius-md);
+  overflow: hidden;
+  padding: 10px;
+  box-shadow: var(--uipro-shadow-sm);
+  transition: var(--uipro-transition);
+}
+
+.gallery-item:hover {
+  box-shadow: var(--uipro-shadow-md);
+  transform: translateY(-4px);
+  border-color: var(--uipro-primary);
+}
+
+.gallery-item img {
+  border-radius: var(--uipro-radius-sm);
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.gallery-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--uipro-text-heading);
+  margin-top: 10px;
+  padding: 4px 6px;
+  text-align: center;
+}
+
+/* ── Contact Section ────────────────────────────────────────────────────── */
+.contact .info-box {
+  background: var(--uipro-surface) !important;
+  border: 1px solid var(--uipro-border) !important;
+  border-radius: var(--uipro-radius-lg) !important;
+  padding: 32px 24px !important;
+  box-shadow: var(--uipro-shadow-sm) !important;
+  transition: var(--uipro-transition) !important;
+  text-align: center;
+  height: 100%;
+}
+
+.contact .info-box:hover {
+  border-color: var(--uipro-primary-tint) !important;
+  box-shadow: var(--uipro-shadow-md) !important;
+  transform: translateY(-4px);
+}
+
+.contact .info-box i {
+  font-size: 34px !important;
+  color: var(--uipro-primary) !important;
+  background: var(--uipro-primary-light);
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.btn-contact {
+  border-radius: var(--uipro-radius-pill) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 20px !important;
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Appointment Form Page ──────────────────────────────────────────────── */
+.appointment-card {
+  background: #FFFFFF;
+  border: 1px solid var(--uipro-border);
+  border-radius: var(--uipro-radius-lg);
+  box-shadow: var(--uipro-shadow-lg);
+  padding: 40px;
+}
+
+.form-label-custom {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--uipro-text-heading);
+  margin-bottom: 8px;
+}
+
+.form-control-custom,
+.form-select-custom {
+  border: 1.5px solid var(--uipro-border) !important;
+  border-radius: var(--uipro-radius-md) !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  color: var(--uipro-text-heading) !important;
+  transition: var(--uipro-transition) !important;
+  background-color: #FAFAFA !important;
+}
+
+.form-control-custom:focus,
+.form-select-custom:focus {
+  background-color: #FFFFFF !important;
+  border-color: var(--uipro-border-focus) !important;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15) !important;
+  outline: none !important;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+#footer {
+  background: #0F172A !important;
+  color: #94A3B8 !important;
+  padding: 60px 0 30px 0 !important;
+  font-size: 14px !important;
+  border-top: 1px solid #1E293B;
+}
+
+#footer h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+#footer a {
+  color: #94A3B8 !important;
+  transition: var(--uipro-transition);
+}
+
+#footer a:hover {
+  color: var(--uipro-primary-tint) !important;
+  padding-left: 4px;
+}
+
+#footer .footer-bottom {
+  border-top: 1px solid #1E293B;
+  padding-top: 24px;
+  margin-top: 40px;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .hero-title {
+    font-size: 2.2rem !important;
+  }
+  #header {
+    top: 0 !important;
+  }
+  #topbar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-title {
+    font-size: 1.85rem !important;
+  }
+  .appointment-card {
+    padding: 24px 18px;
+  }
+}

@@ -1,24 +1,9 @@
 <!DOCTYPE html>
-
-<!-- =========================================================
-* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
-==============================================================
-
-* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
-* Created by: ThemeSelection
-* License: You must have a valid license purchased in order to legally use the theme for your project.
-* Copyright ThemeSelection (https://themeselection.com)
-
-=========================================================
- -->
-<!-- beautify ignore:start -->
 <html
-  lang="en"
+  lang="id"
   class="light-style customizer-hide"
   dir="ltr"
   data-theme="theme-default"
-  data-assets-path="../assets/"
-  data-template="vertical-menu-template-free"
 >
   <head>
     <meta charset="utf-8" />
@@ -27,136 +12,148 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>{{ $title }} | Website Administrator Family Dental Care</title>
-
-    <meta name="description" content="" />
+    <title>Masuk Portal Admin | Klinik FAM Dental Care</title>
+    <meta name="description" content="Masuk ke portal administrasi Klinik FAM Dental Care Bandung." />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('admin/img/favicon/favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Icons. Uncomment required icon fonts -->
+    <!-- Icons -->
     <link rel="stylesheet" href="{{ asset('admin/vendor/fonts/boxicons.css') }}" />
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('admin/vendor/css/core.css') }}" class="template-customizer-core-css" />
     <link rel="stylesheet" href="{{ asset('admin/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ asset('admin/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/css/admin-pro-max.css') }}" />
 
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{{ asset('admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-
-    <!-- Page CSS -->
-    <!-- Page -->
-    <link rel="stylesheet" href="{{ asset('admin/vendor/css/pages/page-auth.css') }}" />
-    <!-- Helpers -->
-    <script src="{{ asset('admin/vendor/js/helpers.js') }}"></script>
-
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="{{ asset('admin/js/config.js') }}"></script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif !important;
+        background: radial-gradient(circle at 50% 15%, #CCFBF1 0%, #F0FDFA 30%, #F8FAFC 75%) !important;
+        min-height: 100vh;
+      }
+      .login-pro-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px -15px rgba(13, 148, 136, 0.15), 0 0 1px 1px rgba(226, 232, 240, 0.8);
+        padding: 42px 38px;
+        width: 100%;
+        max-width: 440px;
+      }
+      .brand-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px;
+        background: #F0FDFA;
+        color: #0F766E;
+        border: 1px solid #CCFBF1;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+    </style>
   </head>
 
   <body>
-    <!-- Content -->
+    <div class="d-flex align-items-center justify-content-center min-vh-100 p-3">
+      <div class="login-pro-card">
+        
+        <!-- Logo & Header -->
+        <div class="text-center mb-4">
+          <div class="brand-badge">
+            <i class="bx bx-shield-quarter"></i>
+            <span>Portal Otentikasi Resmi</span>
+          </div>
 
-    <div class="container-xxl">
-      <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
-          <!-- Register -->
-          <div class="card">
-            <div class="card-body">
-              <!-- Logo -->
-              <div class="app-brand justify-content-center">
-                <a href="/" class="app-brand-link gap-2">
-                  <img src="{{ asset('main/img/logo/logo.png') }}" alt="" style="max-width: 300px">
-                  <span hidden class="app-brand-text demo text-body fw-bolder">Family Dental Care</span>
-                </a>
-              </div>
-              @if (Session::has('message'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                  {{ Session::get('message') }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              @endif
-              <!-- /Logo -->
-              <p class="mb-4">Silahkan masuk menggunakan akun yang terdaftar.</p>
+          <a href="/" class="d-block mb-3 text-decoration-none">
+            <img src="{{ asset('assets/img/logo.png') }}" alt="Klinik FAM Dental Care" style="max-height: 48px; border-radius: 8px;">
+          </a>
+          
+          <h4 class="fw-bold text-dark mb-1" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+            Selamat Datang Kembali
+          </h4>
+          <p class="text-muted small mb-0">
+            Masuk dengan kredensial terdaftar untuk mengakses dashboard klinik.
+          </p>
+        </div>
 
-              <form id="formAuthentication" class="mb-3" action="/login" method="POST" enctype="multipart/form-data">
-                {{ csrf_field() }}
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                    placeholder="Masukkan email..."
-                    autofocus
-                    value="{{ old('email') }}"
-                    required
-                  />
-                  @error('email')
-                  <div id="defaultFormControlHelp" class="form-text">
-                      {{ $message }}
-                  </div>
-                  @enderror
-                </div>
-                <div class="mb-3 form-password-toggle">
-                  <div class="d-flex justify-content-between">
-                    <label class="form-label" for="password">Password</label>
-                    <a hidden href="javascript:void(0)">
-                      <small>Lupa Password?</small>
-                    </a>
-                  </div>
-                  <div class="input-group input-group-merge">
-                    <input
-                      type="password"
-                      id="password"
-                      class="form-control"
-                      name="password"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                      aria-describedby="password"
-                      required
-                    />
-                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <button class="btn btn-primary d-grid w-100" type="submit">Masuk</button>
-                </div>
-              </form>
+        @if (Session::has('message'))
+          <div class="alert alert-danger d-flex align-items-center gap-2 small py-2 px-3 mb-3 border-0 rounded-3 shadow-sm" role="alert" style="background-color: #FFE4E6; color: #9F1239;">
+            <i class="bx bx-error-circle fs-5"></i>
+            <div>{{ Session::get('message') }}</div>
+          </div>
+        @endif
+
+        <form id="formAuthentication" action="/login" method="POST" autocomplete="off">
+          @csrf
+          <div class="mb-3">
+            <label for="email" class="form-label small fw-semibold text-dark">Alamat Email</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 text-muted"><i class="bx bx-envelope"></i></span>
+              <input
+                type="email"
+                class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror"
+                id="email"
+                name="email"
+                placeholder="nama@klinikfamdentalcare.com"
+                value="{{ old('email') }}"
+                required
+                autofocus
+              />
+            </div>
+            @error('email')
+              <div class="text-danger small mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+
+          <div class="mb-4 form-password-toggle">
+            <label class="form-label small fw-semibold text-dark" for="password">Kata Sandi</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text bg-white border-end-0 text-muted"><i class="bx bx-lock-alt"></i></span>
+              <input
+                type="password"
+                id="password"
+                class="form-control border-start-0 ps-0"
+                name="password"
+                placeholder="••••••••••••"
+                required
+              />
+              <span class="input-group-text cursor-pointer bg-white text-muted"><i class="bx bx-hide"></i></span>
             </div>
           </div>
-          <!-- /Register -->
+
+          <div class="mb-3">
+            <button class="btn btn-primary w-100 py-2 fs-6 shadow-sm d-flex align-items-center justify-content-center gap-2" type="submit">
+              <i class="bx bx-log-in"></i> Masuk ke Dashboard
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center mt-4 pt-3 border-top">
+          <a href="/" class="text-decoration-none small text-muted d-inline-flex align-items-center gap-1 hover-primary">
+            <i class="bx bx-arrow-back"></i> Kembali ke Website Utama
+          </a>
         </div>
+
       </div>
     </div>
+
     <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
     <script src="{{ asset('admin/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('admin/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('admin/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-
-    <script src="{{ asset('admin/vendor/js/menu.js') }}"></script>
-    <!-- endbuild -->
-
-    <!-- Vendors JS -->
-
-    <!-- Main JS -->
     <script src="{{ asset('admin/js/main.js') }}"></script>
-
-    <!-- Page JS -->
-
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
 </html>

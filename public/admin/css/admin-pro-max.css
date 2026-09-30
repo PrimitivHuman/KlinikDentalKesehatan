@@ -1,0 +1,360 @@
+/**
+ * UI/UX Pro Max - Admin Design System
+ * Inspired by nextlevelbuilder/ui-ux-pro-max-skill
+ * Style: Clean, Minimalist & Modern Medical Dashboard
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  --admin-primary: #0D9488;
+  --admin-primary-hover: #0F766E;
+  --admin-primary-light: #F0FDFA;
+  --admin-primary-tint: #CCFBF1;
+  --admin-primary-shadow: rgba(13, 148, 136, 0.25);
+
+  --admin-accent: #059669;
+  --admin-info: #0284C7;
+  --admin-warning: #D97706;
+  --admin-danger: #E11D48;
+
+  --admin-bg: #F8FAFC;
+  --admin-surface: #FFFFFF;
+  --admin-border: #E2E8F0;
+  --admin-border-focus: #14B8A6;
+
+  --admin-text-heading: #0F172A;
+  --admin-text-body: #334155;
+  --admin-text-muted: #64748B;
+
+  --admin-radius-sm: 8px;
+  --admin-radius-md: 12px;
+  --admin-radius-lg: 16px;
+  --admin-radius-pill: 9999px;
+
+  --admin-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --admin-shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.02);
+  --admin-shadow-lg: 0 12px 24px -4px rgba(13, 148, 136, 0.08);
+
+  --admin-transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Global Font & Body */
+body, .layout-wrapper {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: var(--admin-text-body) !important;
+  background-color: var(--admin-bg) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.card-title,
+.app-brand-text,
+.menu-link,
+.btn {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  letter-spacing: -0.015em;
+}
+
+/* ── Sidebar Redesign ───────────────────────────────────────────────────── */
+#layout-menu {
+  background: #FFFFFF !important;
+  border-right: 1px solid var(--admin-border) !important;
+  box-shadow: 0 0 20px rgba(15, 23, 42, 0.03) !important;
+}
+
+.app-brand {
+  height: 74px !important;
+  padding: 0 1.5rem !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+}
+
+.app-brand img {
+  max-height: 40px !important;
+  object-fit: contain;
+}
+
+.menu-inner {
+  padding: 1rem 0.85rem !important;
+}
+
+.menu-header-text {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  color: var(--admin-text-muted) !important;
+  padding: 0.75rem 1rem 0.25rem !important;
+}
+
+.menu-item .menu-link {
+  border-radius: var(--admin-radius-md) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--admin-text-body) !important;
+  padding: 0.65rem 1rem !important;
+  margin-bottom: 3px !important;
+  transition: var(--admin-transition) !important;
+}
+
+.menu-item .menu-link:hover {
+  background-color: var(--admin-primary-light) !important;
+  color: var(--admin-primary) !important;
+}
+
+.menu-item .menu-icon {
+  font-size: 1.25rem !important;
+  margin-right: 0.75rem !important;
+  color: var(--admin-text-muted) !important;
+  transition: var(--admin-transition) !important;
+}
+
+.menu-item:hover .menu-icon {
+  color: var(--admin-primary) !important;
+}
+
+.menu-item.active > .menu-link {
+  background: linear-gradient(135deg, var(--admin-primary), #0F766E) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 14px var(--admin-primary-shadow) !important;
+}
+
+.menu-item.active > .menu-link .menu-icon {
+  color: #FFFFFF !important;
+}
+
+/* ── Top Navbar ─────────────────────────────────────────────────────────── */
+.layout-navbar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: var(--admin-radius-lg) !important;
+  box-shadow: var(--admin-shadow-sm) !important;
+  margin-top: 1rem !important;
+}
+
+/* ── Cards & Surfaces ───────────────────────────────────────────────────── */
+.card {
+  background: var(--admin-surface) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: var(--admin-radius-lg) !important;
+  box-shadow: var(--admin-shadow-sm) !important;
+  transition: var(--admin-transition) !important;
+}
+
+.card:hover {
+  box-shadow: var(--admin-shadow-md) !important;
+}
+
+.card-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.card-header .card-title {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: var(--admin-text-heading) !important;
+  margin: 0 !important;
+}
+
+.card-body {
+  padding: 1.5rem !important;
+}
+
+/* ── Stat Metric Cards ──────────────────────────────────────────────────── */
+.stat-card-pro {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--admin-shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: var(--admin-transition);
+}
+
+.stat-card-pro:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--admin-shadow-lg);
+  border-color: var(--admin-primary-tint);
+}
+
+.stat-card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--admin-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.stat-card-icon.teal {
+  background: var(--admin-primary-light);
+  color: var(--admin-primary);
+}
+
+.stat-card-icon.emerald {
+  background: #ECFDF5;
+  color: var(--admin-accent);
+}
+
+.stat-card-icon.blue {
+  background: #F0F9FF;
+  color: var(--admin-info);
+}
+
+.stat-card-icon.amber {
+  background: #FFFBEB;
+  color: var(--admin-warning);
+}
+
+.stat-card-val {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--admin-text-heading);
+  line-height: 1.1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.stat-card-lbl {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ── Clean Data Tables ──────────────────────────────────────────────────── */
+.table {
+  color: var(--admin-text-body) !important;
+  margin-bottom: 0 !important;
+}
+
+.table thead th {
+  background-color: #F8FAFC !important;
+  color: var(--admin-text-muted) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  padding: 12px 18px !important;
+}
+
+.table tbody td {
+  padding: 14px 18px !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  font-size: 14px !important;
+}
+
+.table tbody tr:hover td {
+  background-color: rgba(240, 253, 250, 0.5) !important;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────────────── */
+.badge {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  border-radius: var(--admin-radius-pill) !important;
+  letter-spacing: 0.01em;
+}
+
+.badge-pending, .badge.bg-label-warning {
+  background-color: #FEF3C7 !important;
+  color: #92400E !important;
+  border: 1px solid #FDE68A;
+}
+
+.badge-confirmed, .badge.bg-label-success {
+  background-color: #D1FAE5 !important;
+  color: #065F46 !important;
+  border: 1px solid #A7F3D0;
+}
+
+.badge-completed, .badge.bg-label-info {
+  background-color: #CFFAFE !important;
+  color: #155E75 !important;
+  border: 1px solid #A5F3FC;
+}
+
+.badge-cancelled, .badge.bg-label-danger {
+  background-color: #FFE4E6 !important;
+  color: #9F1239 !important;
+  border: 1px solid #FECDD3;
+}
+
+/* ── Buttons & Forms ────────────────────────────────────────────────────── */
+.btn {
+  border-radius: var(--admin-radius-md) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 8px 18px !important;
+  transition: var(--admin-transition) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--admin-primary), #0F766E) !important;
+  border-color: var(--admin-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 8px var(--admin-primary-shadow) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0F766E, #115E59) !important;
+  border-color: #0F766E !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--admin-primary-shadow) !important;
+}
+
+.form-control, .form-select {
+  border: 1.5px solid var(--admin-border) !important;
+  border-radius: var(--admin-radius-md) !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  color: var(--admin-text-heading) !important;
+  transition: var(--admin-transition) !important;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--admin-border-focus) !important;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15) !important;
+  outline: none !important;
+}
+
+/* ── Auth / Login Page Minimalist ───────────────────────────────────────── */
+.auth-pro-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 10%, #CCFBF1 0%, #F0FDFA 35%, #F8FAFC 80%);
+  padding: 24px;
+}
+
+.auth-pro-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: 0 20px 40px -10px rgba(13, 148, 136, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.04);
+  width: 100%;
+  max-width: 440px;
+  padding: 42px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-pro-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--admin-primary), #0284C7);
+}
