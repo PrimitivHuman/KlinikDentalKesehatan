@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 
 class TrashTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * User yang sudah login dapat mengakses halaman Recycle Bin (trash).
      */
@@ -20,6 +22,7 @@ class TrashTest extends TestCase
                 'email'        => 'testadmin2@example.com',
                 'password'     => bcrypt('password'),
                 'profile_pict' => 'default.png',
+                'role'         => 'admin',
             ]);
         }
 

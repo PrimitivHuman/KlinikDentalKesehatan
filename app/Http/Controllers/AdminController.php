@@ -32,8 +32,11 @@ class AdminController extends Controller
         $countervisits    = Counter::getCounterData();
 
         // R4: Analytics — statistik pasien per bulan (12 bulan terakhir)
+        $driver    = DB::connection()->getDriverName();
+        $monthExpr = $driver === 'sqlite' ? "cast(strftime('%m', tanggal_janji) as integer)" : 'MONTH(tanggal_janji)';
+
         $pasienPerBulan = DB::table('pasien')
-            ->select(DB::raw('MONTH(tanggal_janji) as bulan, COUNT(*) as total'))
+            ->select(DB::raw("{$monthExpr} as bulan, COUNT(*) as total"))
             ->whereYear('tanggal_janji', date('Y'))
             ->whereNull('deleted_at')
             ->groupBy('bulan')

@@ -23,7 +23,8 @@ class AdminSeeder extends Seeder
             'name'         => 'Administrator',
             'email'        => 'admin@klinikfamdentalcare.com',
             'password'     => Hash::make('Admin@12345'),
-            'profile_pict' => '',
+            'role'         => 'superadmin',
+            'profile_pict' => 'default.png',
         ]);
 
         $this->command->info('✅ Akun Admin berhasil dibuat!');

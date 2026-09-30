@@ -19,6 +19,14 @@ class User extends Authenticatable
     public $incrementing = false;
 
     /**
+     * Nilai default atribut model.
+     */
+    protected $attributes = [
+        'role'         => 'admin',
+        'profile_pict' => 'default.png',
+    ];
+
+    /**
      * Atribut yang dapat diisi secara massal.
      */
     protected $fillable = [

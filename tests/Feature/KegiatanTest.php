@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Kegiatan;
 
 class KegiatanTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * User yang sudah login dapat mengakses halaman agenda kegiatan.
      */
@@ -21,6 +23,7 @@ class KegiatanTest extends TestCase
                 'email'        => 'testadmin@example.com',
                 'password'     => bcrypt('password'),
                 'profile_pict' => 'default.png',
+                'role'         => 'admin',
             ]);
         }
 
