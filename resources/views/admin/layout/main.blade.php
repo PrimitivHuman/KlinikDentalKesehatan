@@ -163,5 +163,8 @@ $session = decrypt(Session::get('auth'));
         <!-- Page JS -->
         <script src="{{ asset('admin/js/dashboards-analytics.js') }}"></script>
         <script src="{{ asset('admin/js/pages-account-settings-account.js') }}"></script>
+
+        <!-- Stacked scripts dari masing-masing view -->
+        @stack('scripts')
     </body>
   </html>

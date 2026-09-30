@@ -50,7 +50,7 @@ class GaleriController extends Controller
 
         $img->move(public_path('/img/gallery'), $imgname);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/galeri')->with('success', 'Berhasil mengunggah foto.');
         } else {
             return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam mengunggah foto.');
@@ -110,7 +110,7 @@ class GaleriController extends Controller
             $query = Galeri::where('id_galeri', $request->id_galeri)->update($validated);
         }
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/galeri')->with('success', 'Berhasil mengedit foto.');
         } else {
             return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam mengedit foto.');
@@ -126,7 +126,7 @@ class GaleriController extends Controller
 
         $query = Galeri::destroy(decrypt($id));
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/galeri')->with('success', 'Berhasil menghapus foto.');
         } else {
             return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam menghapus foto.');
@@ -147,18 +147,14 @@ class GaleriController extends Controller
 
         $query = Galeri::vgaleri()->where('judul', 'like', $validated)->orWhere('id_galeri', 'like', $validated)->paginate(8);
 
-        if ($query == true) {
-            if (count($query) == 0) {
-                return redirect()->back()->with('message', 'Data galeri tidak ditemukan.');
-            } else {
-                return view('admin.gallery', [
-                    'title'   => 'Hasil Pencarian : '.$request->cari,
-                    'menu'    => 'galeri',
-                    'gallery' => $query,
-                ]);
-            }
+        if ($query->isNotEmpty()) {
+            return view('admin.gallery', [
+                'title'   => 'Hasil Pencarian : '.$request->cari,
+                'menu'    => 'galeri',
+                'gallery' => $query,
+            ]);
         } else {
-            return redirect()->back()->with('message', 'Terjadi kesalahan dalam pencarian data.');
+            return redirect()->back()->with('message', 'Data galeri tidak ditemukan.');
         }
     }
 
@@ -192,7 +188,7 @@ class GaleriController extends Controller
 
         $query = Galeri::kategori()->insert($validated);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil menambahkan kategori.');
         } else {
             return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam menambahkan kategori.');
@@ -222,7 +218,7 @@ class GaleriController extends Controller
 
         $query = Galeri::kategori()->where('id_kategori', $request->id_kategori)->update($validated);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil mengedit kategori.');
         } else {
             return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam mengedit kategori.');
@@ -235,7 +231,7 @@ class GaleriController extends Controller
     public function kategori_delete($id) {
         $query = Galeri::kategori()->where('id_kategori', decrypt($id))->delete();
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil menghapus kategori.');
         } else {
             return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam menghapus kategori.');
@@ -256,18 +252,14 @@ class GaleriController extends Controller
 
         $query = Galeri::kategori()->where('nama_kategori', 'like', $validated)->orWhere('id_kategori', 'like', $validated)->paginate(20);
 
-        if ($query == true) {
-            if (count($query) == 0) {
-                return redirect()->back()->with('message', 'Data kategori tidak ditemukan.');
-            } else {
-                return view('admin.gallery_category', [
-                    'title'    => 'Hasil Pencarian : '.$request->cari,
-                    'menu'     => 'kategori',
-                    'category' => $query,
-                ]);
-            }
+        if ($query->isNotEmpty()) {
+            return view('admin.gallery_category', [
+                'title'    => 'Hasil Pencarian : '.$request->cari,
+                'menu'     => 'kategori',
+                'category' => $query,
+            ]);
         } else {
-            return redirect()->back()->with('message', 'Terjadi kesalahan dalam pencarian data.');
+            return redirect()->back()->with('message', 'Data kategori tidak ditemukan.');
         }
     }
 }

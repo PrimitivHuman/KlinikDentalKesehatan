@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pasien;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AppointmentConfirmation;
+use App\Mail\AppointmentAdminNotification;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PasienExport;
+use Illuminate\Support\Facades\Log;
 
 class PasienController extends Controller
 {
@@ -32,12 +35,25 @@ class PasienController extends Controller
         $result = Pasien::create($validated);
 
         if ($result) {
+            // Kirim konfirmasi ke pasien
             try {
                 Mail::to($result->email_pasien)
                     ->send(new AppointmentConfirmation($result));
             } catch (\Exception $e) {
-                \Log::warning('Email konfirmasi gagal terkirim: '.$e->getMessage());
+                Log::warning('Email konfirmasi pasien gagal terkirim: ' . $e->getMessage());
             }
+
+            // R1: Kirim notifikasi ke semua akun superadmin
+            try {
+                $admins = User::where('role', 'superadmin')->get();
+                foreach ($admins as $admin) {
+                    Mail::to($admin->email)->send(new AppointmentAdminNotification($result));
+                }
+            } catch (\Exception $e) {
+                Log::warning('Email notifikasi admin gagal terkirim: ' . $e->getMessage());
+            }
+
+            Log::info('Pasien baru mendaftar', ['nama' => $result->nama_pasien, 'id' => $result->id_pasien]);
 
             return redirect('/appointment')->with('sent-message', 'Pendaftaran berhasil. Kami akan menghubungi Anda segera.');
         } else {
@@ -78,9 +94,10 @@ class PasienController extends Controller
 
     /**
      * Menampilkan form edit data pasien berdasarkan ID terenkripsi.
+     * K11 Fix: Gunakan firstOrFail() bukan get() karena hanya butuh 1 record.
      */
     public function pasien_edit($id) {
-        $pasien = Pasien::where('id_pasien', decrypt($id))->get();
+        $pasien = Pasien::where('id_pasien', decrypt($id))->firstOrFail();
 
         return view('admin.pasien_edit', [
             'pasien' => $pasien,
@@ -95,7 +112,7 @@ class PasienController extends Controller
     public function pasien_delete($id) {
         $query = Pasien::destroy(decrypt($id));
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/pasien')->with('success', 'Berhasil menghapus data pasien.');
         } else {
             return redirect('/admin-area/pasien')->with('error', 'Terjadi kesalahan dalam menghapus data pasien.');
@@ -121,7 +138,7 @@ class PasienController extends Controller
 
         $query = Pasien::where('id_pasien', $request->id_pasien)->update($query);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/pasien')->with('success', 'Berhasil mengedit data pasien.');
         } else {
             return redirect('/admin-area/pasien')->with('error', 'Terjadi kesalahan dalam mengedit data pasien.');
@@ -145,18 +162,14 @@ class PasienController extends Controller
                        ->orWhere('no_hp_pasien', 'like', $validated)
                        ->paginate(8);
 
-        if ($query == true) {
-            if (count($query) == 0) {
-                return redirect()->back()->with('message', 'Data pasien tidak ditemukan.');
-            } else {
-                return view('admin.pasien', [
-                    'title'  => 'Hasil Pencarian : '.$request->cari,
-                    'menu'   => 'pasien',
-                    'pasien' => $query,
-                ]);
-            }
+        if ($query->isNotEmpty()) {
+            return view('admin.pasien', [
+                'title'  => 'Hasil Pencarian : '.$request->cari,
+                'menu'   => 'pasien',
+                'pasien' => $query,
+            ]);
         } else {
-            return redirect()->back()->with('message', 'Terjadi kesalahan dalam pencarian data.');
+            return redirect()->back()->with('message', 'Data pasien tidak ditemukan.');
         }
     }
 

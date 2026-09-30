@@ -42,7 +42,7 @@ class DokterController extends Controller
 
         $img->move(public_path('/img/dokter'), $imgname);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/dokter')->with('success', 'Berhasil menambahkan data dokter.');
         } else {
             return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam menambahkan data dokter.');
@@ -51,9 +51,10 @@ class DokterController extends Controller
 
     /**
      * Menampilkan form edit data dokter berdasarkan ID terenkripsi.
+     * K11 Fix: Gunakan firstOrFail() bukan get() karena hanya butuh 1 record.
      */
     public function dokter_edit($id) {
-        $dokter = Dokter::where('id_dokter', decrypt($id))->get();
+        $dokter = Dokter::where('id_dokter', decrypt($id))->firstOrFail();
 
         return view('admin.dokter_edit', [
             'dokter' => $dokter,
@@ -71,7 +72,7 @@ class DokterController extends Controller
 
         $query = Dokter::destroy(decrypt($id));
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/dokter')->with('success', 'Berhasil menghapus data dokter.');
         } else {
             return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam menghapus data dokter.');
@@ -126,7 +127,7 @@ class DokterController extends Controller
             $query = Dokter::where('id_dokter', $request->id_dokter)->update($query);
         }
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/dokter')->with('success', 'Berhasil mengedit data dokter.');
         } else {
             return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam mengedit data dokter.');
@@ -150,18 +151,14 @@ class DokterController extends Controller
                        ->orWhere('jadwal_dokter', 'like', $validated)
                        ->paginate(8);
 
-        if ($query == true) {
-            if (count($query) == 0) {
-                return redirect()->back()->with('message', 'Data dokter tidak ditemukan.');
-            } else {
-                return view('admin.dokter', [
-                    'title'  => 'Hasil Pencarian : '.$request->cari,
-                    'menu'   => 'dokter',
-                    'dokter' => $query,
-                ]);
-            }
+        if ($query->isNotEmpty()) {
+            return view('admin.dokter', [
+                'title'  => 'Hasil Pencarian : '.$request->cari,
+                'menu'   => 'dokter',
+                'dokter' => $query,
+            ]);
         } else {
-            return redirect()->back()->with('message', 'Terjadi kesalahan dalam pencarian data.');
+            return redirect()->back()->with('message', 'Data dokter tidak ditemukan.');
         }
     }
 }

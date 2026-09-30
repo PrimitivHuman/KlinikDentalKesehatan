@@ -41,9 +41,10 @@ class KegiatanController extends Controller
 
     /**
      * Menampilkan form edit agenda kegiatan.
+     * K11 Fix: Gunakan firstOrFail() bukan get() karena hanya butuh 1 record.
      */
     public function activity_edit($id) {
-        $activity = Kegiatan::where('id_kegiatan', decrypt($id))->get();
+        $activity = Kegiatan::where('id_kegiatan', decrypt($id))->firstOrFail();
 
         return view('admin.activity_edit', [
             'activity' => $activity,

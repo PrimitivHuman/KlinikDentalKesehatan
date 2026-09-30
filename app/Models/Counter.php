@@ -10,12 +10,22 @@ class Counter extends Model
     use HasFactory;
 
     protected $table = 'counter';
-    protected $primaryKey = '';
-    
-    public $incrementing = false;
-    public $timestamps = false;
 
-    public static function getCounterData() {
+    // K9 Fix: Hapus primaryKey kosong — tabel counter tidak memiliki PK tunggal.
+    // Operasi query tetap berjalan via where() clause, bukan via primary key.
+    public $incrementing = false;
+    public $timestamps   = false;
+
+    protected $fillable = ['date', 'ip'];
+
+    /**
+     * Mengambil data kunjungan pengunjung dalam rentang satu minggu saat ini.
+     * Mengembalikan array: [collection_seminggu, jml_senin, selasa, rabu, kamis, jumat, sabtu, minggu]
+     *
+     * @return array
+     */
+    public static function getCounterData(): array
+    {
         $mon = date("Y-m-d", strtotime('monday this week'));
         $tue = date("Y-m-d", strtotime('tuesday this week'));
         $wed = date("Y-m-d", strtotime('wednesday this week'));
@@ -34,8 +44,6 @@ class Counter extends Model
         $query6 = Counter::where('date', $sat)->count();
         $query7 = Counter::where('date', $sun)->count();
 
-        $result = [$query, $query1, $query2, $query3, $query4, $query5, $query6, $query7];
-        //dd($result);
-        return $result;
+        return [$query, $query1, $query2, $query3, $query4, $query5, $query6, $query7];
     }
 }

@@ -42,6 +42,14 @@
             </a>
         </li>
 
+        {{-- R3: Menu Layanan Klinik --}}
+        <li class="menu-item @if ($menu == 'layanan') active @endif">
+            <a href="/admin-area/layanan" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-plus-medical"></i>
+                <div>Layanan Klinik</div>
+            </a>
+        </li>
+
         <li class="menu-item @if ($menu == 'galeri') active open @endif">
             <a href="/admin-area/galeri" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-image"></i>
@@ -53,6 +61,14 @@
             <a href="/admin-area/kegiatan" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-calendar-event"></i>
                 <div>Agenda Kegiatan</div>
+            </a>
+        </li>
+
+        {{-- R2: Menu Berita / Artikel --}}
+        <li class="menu-item @if ($menu == 'berita') active @endif">
+            <a href="/admin-area/berita" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-news"></i>
+                <div>Berita / Artikel</div>
             </a>
         </li>
 
@@ -71,12 +87,15 @@
             <span class="menu-header-text">Pengaturan Admin</span>
         </li>
 
+        {{-- R7-lite: Tampilkan menu admin hanya untuk superadmin --}}
+        @if(Auth::user()->role === 'superadmin')
         <li class="menu-item @if ($menu == 'pengguna') active @endif">
             <a href="/admin-area/akun" class="menu-link">
                 <i class='menu-icon tf-icons bx bxs-user-detail'></i>
                 Data Admin
             </a>
         </li>
+        @endif
     </ul>
 </aside>
 <!-- / Menu -->

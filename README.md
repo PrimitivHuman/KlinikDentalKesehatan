@@ -1,64 +1,191 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# 🦷 KlinikDentalKesehatan
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web manajemen klinik gigi berbasis **Laravel 8**, mencakup sistem reservasi janji temu pasien, manajemen dokter, galeri foto, agenda kegiatan, dan panel admin lengkap.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Halaman publik** — Landing page klinik (informasi, dokter, galeri)
+- **Reservasi online** — Form janji temu pasien dengan email konfirmasi otomatis
+- **Dashboard admin** — Statistik ringkas + grafik kunjungan mingguan
+- **Manajemen pasien** — CRUD, status tracking, export Excel, invoice
+- **Manajemen dokter** — CRUD + upload foto
+- **Galeri foto** — Dengan kategori, upload, soft delete
+- **Agenda kegiatan** — CRUD agenda klinik
+- **Informasi umum** — Edit visi, misi, deskripsi, foto sampul
+- **Recycle Bin** — Restore & force delete data terhapus
+- **Multi-role** — `superadmin` (kelola semua) & `operator` (akses terbatas)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Komponen | Teknologi |
+|----------|-----------|
+| Backend | Laravel 8.x |
+| PHP | ^7.3 / ^8.0 |
+| Database | MySQL |
+| Auth | Laravel Session Auth + Sanctum |
+| Export | Maatwebsite/Excel 3.1 |
+| Alert | realrashid/sweet-alert |
+| Build Tool | Laravel Mix (Webpack) |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚀 Instalasi & Setup
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### 1. Clone Repository
 
-### Premium Partners
+```bash
+git clone <url-repository>
+cd KlinikDentalKesehatan
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### 2. Install Dependensi PHP
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Install Dependensi Node.js
 
-## Code of Conduct
+```bash
+npm install
+npm run dev
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Konfigurasi Environment
 
-## Security Vulnerabilities
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Edit file `.env` dan sesuaikan konfigurasi berikut:
 
-## License
+```env
+APP_NAME="Klinik Dental Kesehatan"
+APP_URL=http://localhost
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=klinikdental
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Konfigurasi Email (untuk konfirmasi janji temu)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="noreply@klinikdental.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+### 5. Jalankan Migrasi Database
+
+```bash
+php artisan migrate
+```
+
+### 6. (Opsional) Jalankan Seeder
+
+```bash
+php artisan db:seed
+```
+
+### 7. Buat Symbolic Link Storage
+
+```bash
+php artisan storage:link
+```
+
+### 8. Jalankan Aplikasi
+
+```bash
+php artisan serve
+```
+
+Akses di browser: `http://localhost:8000`
+
+---
+
+## 👥 Akun & Role
+
+| Role | Akses |
+|------|-------|
+| `superadmin` | Akses penuh semua fitur termasuk manajemen akun pengguna |
+| `operator` | Akses semua fitur kecuali manajemen akun pengguna |
+
+---
+
+## 📂 Struktur Direktori Penting
+
+```
+app/
+├── Http/Controllers/   # Controller untuk setiap fitur
+├── Http/Middleware/    # Termasuk RoleMiddleware
+├── Models/             # Model Eloquent (Pasien, Dokter, Galeri, dll)
+├── Exports/            # PasienExport untuk Excel
+└── Mail/               # AppointmentConfirmation email
+
+database/
+└── migrations/         # Semua file migrasi database
+
+resources/views/
+├── admin/              # View panel admin (25+ halaman)
+├── main/               # View halaman publik
+└── emails/             # Template email
+
+routes/
+└── web.php             # Definisi semua route
+```
+
+---
+
+## 🧪 Menjalankan Tests
+
+```bash
+php artisan test
+```
+
+Atau untuk test spesifik:
+
+```bash
+php artisan test --filter AuthTest
+php artisan test --filter PasienTest
+```
+
+---
+
+## 📋 Format ID
+
+| Entitas | Format | Contoh |
+|---------|--------|--------|
+| Akun Admin | AK-XXX | AK-001 |
+| Dokter | DOK-XXX | DOK-001 |
+| Galeri | GL-XXX | GL-001 |
+| Kategori | KT-XXX | KT-001 |
+| Kegiatan | KGT-XXX | KGT-001 |
+| Pasien | PSN-XXX (display) | PSN-001 |
+
+---
+
+## 🔐 Keamanan
+
+- CSRF Protection aktif di semua form
+- Rate limiting login (max 5 percobaan/menit)
+- ID sensitif dienkripsi di URL
+- Password di-hash dengan Bcrypt
+- Session ID diregenerasi setelah login
+- Role-based access control (superadmin / operator)
+
+---
+
+## 📝 Lisensi
+
+MIT License

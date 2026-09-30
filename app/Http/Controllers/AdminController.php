@@ -10,6 +10,11 @@ use App\Models\Counter;
 use App\Models\Dokter;
 use App\Models\Pasien;
 use App\Models\Kegiatan;
+use App\Models\Berita;
+use App\Models\Layanan;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -26,17 +31,46 @@ class AdminController extends Controller
         $countdokter      = Dokter::count();
         $countervisits    = Counter::getCounterData();
 
+        // R4: Analytics — statistik pasien per bulan (12 bulan terakhir)
+        $pasienPerBulan = DB::table('pasien')
+            ->select(DB::raw('MONTH(tanggal_janji) as bulan, COUNT(*) as total'))
+            ->whereYear('tanggal_janji', date('Y'))
+            ->whereNull('deleted_at')
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get()
+            ->keyBy('bulan');
+
+        $chartPasienBulanan = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $chartPasienBulanan[] = $pasienPerBulan->has($m) ? $pasienPerBulan[$m]->total : 0;
+        }
+
+        // R4: Statistik status pasien
+        $statusStats = Pasien::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status');
+
+        // R5: Jumlah berita & layanan untuk dashboard
+        $countberita  = Berita::count();
+        $countlayanan = Layanan::count();
+
         return view('admin.index', [
-            'title'             => "Beranda",
-            'menu'              => "home",
-            'information_count' => $countinformation,
-            'category_count'    => $countcategory,
-            'galeri_count'      => $countgaleri,
-            'kegiatan_count'    => $countkegiatan,
-            'user_count'        => $countuser,
-            'pasien_count'      => $countpasien,
-            'dokter_count'      => $countdokter,
-            'countervisit'      => $countervisits,
+            'title'                => 'Beranda',
+            'menu'                 => 'home',
+            'information_count'    => $countinformation,
+            'category_count'       => $countcategory,
+            'galeri_count'         => $countgaleri,
+            'kegiatan_count'       => $countkegiatan,
+            'user_count'           => $countuser,
+            'pasien_count'         => $countpasien,
+            'dokter_count'         => $countdokter,
+            'countervisit'         => $countervisits,
+            'chart_pasien_bulanan' => $chartPasienBulanan,
+            'status_stats'         => $statusStats,
+            'berita_count'         => $countberita,
+            'layanan_count'        => $countlayanan,
         ]);
     }
 
@@ -60,6 +94,28 @@ class AdminController extends Controller
         return view('admin.dokter_new', [
             'menu'  => "dokter",
             'title' => "Tambah Dokter Baru",
+        ]);
+    }
+
+    /**
+     * R3: Halaman Manajemen Layanan Klinik.
+     */
+    public function layanan() {
+        $layanans = Layanan::orderBy('urutan')->paginate(10);
+        return view('admin.layanan', [
+            'title'    => 'Manajemen Layanan Klinik',
+            'menu'     => 'layanan',
+            'layanans' => $layanans,
+        ]);
+    }
+
+    /**
+     * R3: Form Tambah Layanan Baru.
+     */
+    public function layanan_new() {
+        return view('admin.layanan_new', [
+            'title' => 'Tambah Layanan Baru',
+            'menu'  => 'layanan',
         ]);
     }
 
@@ -197,10 +253,11 @@ class AdminController extends Controller
      * Halaman Sampah / Trash Bin (Melihat data soft deleted).
      */
     public function trash() {
-        $deletedPasien  = Pasien::onlyTrashed()->get();
-        $deletedDokter  = Dokter::onlyTrashed()->get();
-        $deletedGaleri  = Galeri::onlyTrashed()->get();
-        $deletedKegiatan= Kegiatan::onlyTrashed()->get();
+        // K8 Fix: Gunakan paginate agar tidak memuat semua data terhapus sekaligus
+        $deletedPasien   = Pasien::onlyTrashed()->paginate(10, ['*'], 'pasien_page');
+        $deletedDokter   = Dokter::onlyTrashed()->paginate(10, ['*'], 'dokter_page');
+        $deletedGaleri   = Galeri::onlyTrashed()->paginate(10, ['*'], 'galeri_page');
+        $deletedKegiatan = Kegiatan::onlyTrashed()->paginate(10, ['*'], 'kegiatan_page');
 
         return view('admin.trash', [
             'title'           => 'Sampah / Recycle Bin',
@@ -230,6 +287,12 @@ class AdminController extends Controller
         }
 
         if ($restored) {
+            // K14 Fix: Log aksi restore untuk audit trail
+            Log::info('Data restored from trash', [
+                'type'    => $type,
+                'id'      => $realId,
+                'by_user' => Auth::id(),
+            ]);
             return redirect('/admin-area/trash')->with('success', 'Berhasil memulihkan data.');
         }
 
@@ -267,6 +330,12 @@ class AdminController extends Controller
         }
 
         if ($deleted) {
+            // K14 Fix: Log aksi force delete untuk audit trail
+            Log::warning('Data permanently deleted', [
+                'type'    => $type,
+                'id'      => $realId,
+                'by_user' => Auth::id(),
+            ]);
             return redirect('/admin-area/trash')->with('success', 'Berhasil menghapus data secara permanen.');
         }
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -46,23 +47,25 @@ class User extends Authenticatable
 
     /**
      * Menghasilkan ID unik untuk akun admin dengan format AK-001.
-     * P2-Fix: Gunakan regex untuk ekstraksi angka agar format konsisten (3 digit, zero-padded).
+     * K2-Fix: Dibungkus DB::transaction() untuk mencegah race condition
+     * ketika dua request membuat akun baru secara bersamaan.
      *
      * @return string Contoh: AK-001, AK-002, AK-010
      */
     public static function generateID(): string
     {
-        $lastId = User::max('id');
+        return DB::transaction(function () {
+            $lastId = User::lockForUpdate()->max('id');
 
-        if ($lastId) {
-            // Ekstrak bagian angka dari akhir ID (misal: "AK-001" → 1, "AK-010" → 10)
-            preg_match('/\d+$/', $lastId, $matches);
-            $num = isset($matches[0]) ? (int) $matches[0] : 0;
-        } else {
-            $num = 0;
-        }
+            if ($lastId) {
+                preg_match('/\d+$/', $lastId, $matches);
+                $num = isset($matches[0]) ? (int) $matches[0] : 0;
+            } else {
+                $num = 0;
+            }
 
-        return 'AK-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+            return 'AK-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+        });
     }
 
     /**

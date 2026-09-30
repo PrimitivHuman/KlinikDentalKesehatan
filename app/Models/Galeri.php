@@ -21,8 +21,17 @@ class Galeri extends Model
         'judul',
         'deskripsi',
         'images',
-        'nama_kategori',
+        // K5 Fix: 'nama_kategori' dihapus — gunakan relasi ke tabel kategori
     ];
+
+    /**
+     * K6 Fix: Relasi ke tabel kategori via Eloquent.
+     * Menggantikan denormalisasi kolom nama_kategori di tabel galeri.
+     */
+    public function kategoriRelasi()
+    {
+        return $this->belongsTo(\Illuminate\Support\Facades\DB::table('kategori'), 'id_kategori', 'id_kategori');
+    }
 
     public $incrementing = false;
     public $timestamps   = false;
@@ -62,41 +71,45 @@ class Galeri extends Model
 
     /**
      * Menghasilkan ID unik untuk galeri dengan format GL-001.
-     * P2-Fix: Format konsisten 3 digit, zero-padded menggunakan regex + str_pad.
+     * K2-Fix: Dibungkus DB::transaction() + lockForUpdate() untuk mencegah race condition.
      *
      * @return string Contoh: GL-001, GL-002, GL-010
      */
     public static function galleryGenerateID(): string
     {
-        $lastId = Galeri::max('id_galeri');
+        return DB::transaction(function () {
+            $lastId = Galeri::lockForUpdate()->max('id_galeri');
 
-        if ($lastId) {
-            preg_match('/\d+$/', $lastId, $matches);
-            $num = isset($matches[0]) ? (int) $matches[0] : 0;
-        } else {
-            $num = 0;
-        }
+            if ($lastId) {
+                preg_match('/\d+$/', $lastId, $matches);
+                $num = isset($matches[0]) ? (int) $matches[0] : 0;
+            } else {
+                $num = 0;
+            }
 
-        return 'GL-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+            return 'GL-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+        });
     }
 
     /**
      * Menghasilkan ID unik untuk kategori galeri dengan format KT-001.
-     * P2-Fix: Format konsisten 3 digit, zero-padded.
+     * K2-Fix: Dibungkus DB::transaction() + lockForUpdate() untuk mencegah race condition.
      *
      * @return string Contoh: KT-001, KT-002, KT-010
      */
     public static function categoryGenerateID(): string
     {
-        $lastId = Galeri::kategori()->max('id_kategori');
+        return DB::transaction(function () {
+            $lastId = DB::table('kategori')->lockForUpdate()->max('id_kategori');
 
-        if ($lastId) {
-            preg_match('/\d+$/', $lastId, $matches);
-            $num = isset($matches[0]) ? (int) $matches[0] : 0;
-        } else {
-            $num = 0;
-        }
+            if ($lastId) {
+                preg_match('/\d+$/', $lastId, $matches);
+                $num = isset($matches[0]) ? (int) $matches[0] : 0;
+            } else {
+                $num = 0;
+            }
 
-        return 'KT-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+            return 'KT-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
+        });
     }
 }

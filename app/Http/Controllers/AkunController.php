@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class AkunController extends Controller
 {
@@ -44,7 +45,7 @@ class AkunController extends Controller
 
         $img->move(public_path('/img/account'), $imgname);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/akun')->with('success', 'Berhasil menambahkan data akun.');
         } else {
             return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam menambahkan data akun.');
@@ -128,7 +129,7 @@ class AkunController extends Controller
 
         $query = User::where('id', $request->id)->update($validated);
 
-        if ($query == true) {
+        if ($query) {
             return redirect('/admin-area/akun')->with('success', 'Berhasil mengedit data akun.');
         } else {
             return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam mengedit data akun.');
@@ -144,7 +145,7 @@ class AkunController extends Controller
 
         $query = User::destroy(decrypt($id));
 
-        if ($query == true) {
+        if ($query) {
             if ($from == false) {
                 return redirect('/admin-area/akun')->with('success', 'Berhasil menghapus data akun.');
             } else {
@@ -172,18 +173,14 @@ class AkunController extends Controller
                      ->orWhere('id', 'like', $validated)
                      ->paginate(8);
 
-        if ($query == true) {
-            if (count($query) == 0) {
-                return redirect()->back()->with('message', 'Akun tidak ditemukan.');
-            } else {
-                return view('admin.account', [
-                    'title'   => 'Hasil Pencarian Akun : '.$request->cari,
-                    'menu'    => 'pengguna',
-                    'account' => $query,
-                ]);
-            }
+        if ($query->isNotEmpty()) {
+            return view('admin.account', [
+                'title'   => 'Hasil Pencarian Akun : '.$request->cari,
+                'menu'    => 'pengguna',
+                'account' => $query,
+            ]);
         } else {
-            return redirect()->back()->with('message', 'Terjadi kesalahan dalam pencarian akun.');
+            return redirect()->back()->with('message', 'Akun tidak ditemukan.');
         }
     }
 
@@ -200,9 +197,13 @@ class AkunController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            // K14 Fix: Log login berhasil
+            Log::info('Admin login successful', ['email' => $request->email, 'ip' => $request->ip()]);
             return redirect()->intended('/admin-area');
         }
 
+        // K14 Fix: Log percobaan login gagal
+        Log::warning('Admin login failed', ['email' => $request->email, 'ip' => $request->ip()]);
         return back()->with('message', 'E-Mail / Sandi yang anda masukkan salah.');
     }
 

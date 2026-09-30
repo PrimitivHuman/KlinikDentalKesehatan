@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Dokter;
 
 class Pasien extends Model
 {
@@ -36,5 +37,16 @@ class Pasien extends Model
      */
     public function getFormattedIdAttribute() {
         return 'PSN-' . str_pad($this->id_pasien, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * K6 Fix: Relasi pasien ke dokter melalui nama dokter yang dipilih.
+     * Menggunakan hasOne dengan foreign key nama agar bisa eager-load data dokter.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function dokter()
+    {
+        return $this->hasOne(Dokter::class, 'nama_dokter', 'dokter_pilihan');
     }
 }

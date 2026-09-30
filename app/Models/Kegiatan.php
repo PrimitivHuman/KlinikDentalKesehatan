@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Kegiatan extends Model
 {
@@ -41,18 +42,21 @@ class Kegiatan extends Model
 
     /**
      * Generate ID otomatis format konsisten 3 digit (KGT-001, KGT-002, dst).
+     * K2-Fix: Dibungkus DB::transaction() + lockForUpdate() untuk mencegah race condition.
      *
      * @return string
      */
     public static function generateID() {
-        $last = Kegiatan::withTrashed()->orderBy('id_kegiatan', 'desc')->first();
-        if (!$last) {
-            return 'KGT-001';
-        }
+        return DB::transaction(function () {
+            $last = Kegiatan::withTrashed()->lockForUpdate()->orderBy('id_kegiatan', 'desc')->first();
+            if (!$last) {
+                return 'KGT-001';
+            }
 
-        preg_match('/\d+$/', $last->id_kegiatan, $matches);
-        $number = isset($matches[0]) ? (int)$matches[0] + 1 : 1;
+            preg_match('/\d+$/', $last->id_kegiatan, $matches);
+            $number = isset($matches[0]) ? (int)$matches[0] + 1 : 1;
 
-        return 'KGT-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+            return 'KGT-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+        });
     }
 }

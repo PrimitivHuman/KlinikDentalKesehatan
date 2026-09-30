@@ -95,73 +95,46 @@
         <div class="container" data-aos="fade-up">
 
             <div class="section-title">
-                <h2>Services</h2>
-                <p>Family Dental Care memiliki beberapa layanan perawatan gigi, segera konsultasi di Family Dental Care.</p>
+                <h2>Layanan Kami</h2>
+                <p>Family Dental Care memiliki beragam layanan perawatan gigi profesional. Segera konsultasikan kebutuhan gigi Anda bersama kami.</p>
             </div>
 
             <div class="row">
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-hospital-user"></i></div>
-                    <h4 class="title"><a href="">Konsultasi</a></h4>
-                    <p class="description">Kontrol rutin bermanfaat untuk memelihara kesehatan gigi dan mulut, mendeteksi masalah gigi sejak dini,
-                        sehingga memberikan penanganan yang tepat dan akurat untuk menghindari kondisi yang terlanjur parah.</p>
-                </div>
-                <!-- <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="icon"><i class="fas fa-teeth"></i></div>
-                    <h4 class="title"><a href="">Penambalan Gigi</a></h4>
-                    <p class="description">Prosedur penambalan gigi bertujuan untuk mengembalikan bentuk dan fungsi gigi yang rusak atau berlubang.</p>
-                </div> -->
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="icon"><i class="fas fa-teeth"></i></div>
-                    <h4 class="title"><a href="">Penambalan Gigi</a></h4>
-                    <p class="description">Family Dental Care menyediakan pelayanan penambalan gigi yang bertujuan untuk mengembalikan bentuk dan fungsi gigi yang rusak atau berlubang.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="icon"><i class="fas fa-teeth-open"></i></div>
-                    <h4 class="title"><a href="">Pencabutan Gigi</a></h4>
-                    <p class="description">Family Dental Care menyediakan pelayanan pencabutan gigi yang merupakan prosedur untuk mencabut gigi yang bermasalah dan tidak bisa diperbaiki lagi dari gusi.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-xmarks-lines"></i></div>
-                    <h4 class="title"><a href="">Pemasangan Kawat Gigi</a></h4>
-                    <p class="description">Pemasangan kawat gigi atau behel adalah prosedur untuk memperbaiki susunan gigi yang tidak rapi atau posisi rahang yang tidak normal.
-                        Family Dental Care menyediakan pelayanan pemasangan kawat gigi untuk perbaikan gigi dan rahang.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-                    <h4 class="title"><a href="">Pembersihan Karang Gigi</a></h4>
-                    <p class="description">Segera atasi gusi berdarah serta bau mulut tidak sedap dengan perawatan pembersihan karang gigi atau Scaling di Family Dental Care.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-spray-can-sparkles"></i></div>
-                    <h4 class="title"><a href="">Bleaching</a></h4>
-                    <p class="description">Family Dental Care menyediakan pelayanan bleaching gigi atau dental whitening yang bertujuan untuk mengembalikan estetika gigi dan mendapatkan warna cerah pada gigi.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-stethoscope"></i></div>
-                    <h4 class="title"><a href="">Bedah Minor</a></h4>
-                    <p class="description">Bedah minor merupakan prosedur pencabutan gigi dengan menggunakan anestesi lokal yang dilakukan untuk pengambilan gigi geraham bungsu yang tumbuhnya miring,
-                        Gigi yang memiliki kelainan kondisi, ataupun penghalusan penonjolan tulang yang mengganggu.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-screwdriver-wrench"></i></div>
-                    <h4 class="title"><a href="">Tambal Estetik</a></h4>
-                    <p class="description">Tambal estetik merupakan prosedur penambalan gigi berlubang yang dilakukan dengan bahan laser.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-face-grimace"></i></div>
-                    <h4 class="title"><a href="">Perawatan Gigi Anak</a></h4>
-                    <p class="description">Memelihara kesehatan gigi dan mulut sejak usia dini dengan baik akan membantu menjaga kesehatan gigi dan gusi sepanjang hidup mereka.
-                        Family Dental Care menyediakan pelayanan perawatan gigi mulai dari bayi, anak-anak, serta remaja supaya kunjungan ke Dokter Gigi dan perawatan gigi menjadi proses yang menyenangkan.</p>
-                </div>
-                <div class="col-lg-4 col-md-6 align-items icon-box" data-aos="zoom-in" data-aos-delay="100">
-                </div>
-                <div class="col-lg-4 col-md-6 align-items icon-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="icon"><i class="fas fa-tooth"></i></div>
-                    <h4 class="title"><a href="">Gigi Tiruan</a></h4>
-                    <p class="description">Family Dental Care menyediakan pelayanan implan gigi yang merupakan pilihan treatment terbaik untuk menggantikan gigi yang hilang karena fitur serta kemiripannya dengan gigi asli.</p>
-                </div>
-
+                @if(isset($layanans) && $layanans->count() > 0)
+                    @foreach($layanans as $index => $layanan)
+                    <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="{{ ($index % 6 + 1) * 100 }}">
+                        <div class="icon">
+                            @if($layanan->images)
+                                <img src="{{ asset('img/layanan/'.$layanan->images) }}" alt="{{ $layanan->nama_layanan }}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+                            @else
+                                <i class="bx {{ $layanan->ikon ?? 'bx-plus-medical' }}"></i>
+                            @endif
+                        </div>
+                        <h4 class="title"><a href="/appointment">{{ $layanan->nama_layanan }}</a></h4>
+                        <p class="description">{{ Str::limit(strip_tags($layanan->deskripsi), 150) }}</p>
+                        @if($layanan->harga_mulai)
+                        <small class="text-primary fw-semibold">{{ $layanan->harga_range }}</small>
+                        @endif
+                    </div>
+                    @endforeach
+                @else
+                    {{-- Fallback: layanan statis jika database belum diisi --}}
+                    <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="icon"><i class="fas fa-hospital-user"></i></div>
+                        <h4 class="title"><a href="/appointment">Konsultasi</a></h4>
+                        <p class="description">Kontrol rutin untuk memelihara kesehatan gigi dan mulut, mendeteksi masalah gigi sejak dini.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="icon"><i class="fas fa-teeth"></i></div>
+                        <h4 class="title"><a href="/appointment">Penambalan Gigi</a></h4>
+                        <p class="description">Prosedur penambalan gigi untuk mengembalikan bentuk dan fungsi gigi yang rusak atau berlubang.</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 icon-box" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="icon"><i class="fas fa-teeth-open"></i></div>
+                        <h4 class="title"><a href="/appointment">Pencabutan Gigi</a></h4>
+                        <p class="description">Prosedur pencabutan gigi yang bermasalah dan tidak bisa diperbaiki lagi dari gusi.</p>
+                    </div>
+                @endif
             </div>
 
         </div>

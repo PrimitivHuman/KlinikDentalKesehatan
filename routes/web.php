@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route; 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
@@ -9,6 +9,8 @@ use App\Http\Controllers\DokterController;
 use App\Http\Controllers\TentangController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\LayananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,14 +31,17 @@ Route::get('/login', [AdminController::class, 'login'])->name('login')->middlewa
 Route::post('/login', [AkunController::class, 'login'])->middleware('throttle:5,1');
 Route::get('/logout', [AkunController::class, 'logout'])->middleware('auth');
 
-// Admin Authenticated Routes
+// Admin Authenticated Routes (semua user yang sudah login)
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/admin-area', [AdminController::class, 'index']);
 
-    // Admin Settings / Profile Edit
+    // Pengaturan profil akun sendiri
     Route::get('/admin-area/pengaturan', [AkunController::class, 'settings']);
     Route::post('/admin-area/pengaturan/update', [AkunController::class, 'settings_update']);
+
+    // Detail profil akun sendiri (bisa diakses semua role)
+    Route::get('/admin-area/akun/detail', [AkunController::class, 'account_detail']);
 
     // Pasien Management
     Route::get('/admin-area/pasien', [AdminController::class, 'pasien']);
@@ -97,10 +102,30 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin-area/trash/restore/{type}/{id}', [AdminController::class, 'restore']);
     Route::get('/admin-area/trash/force-delete/{type}/{id}', [AdminController::class, 'force_delete']);
 
-    // Account Management (Restricted to superadmin or admin)
+    // R2: Berita / Artikel Klinik
+    Route::get('/admin-area/berita', [BeritaController::class, 'index']);
+    Route::get('/admin-area/berita/new', [BeritaController::class, 'create']);
+    Route::post('/admin-area/berita/submit', [BeritaController::class, 'store']);
+    Route::get('/admin-area/berita/edit/{id}', [BeritaController::class, 'edit']);
+    Route::post('/admin-area/berita/edit/update', [BeritaController::class, 'update']);
+    Route::get('/admin-area/berita/delete/{id}', [BeritaController::class, 'destroy']);
+    Route::get('/admin-area/berita/toggle/{id}', [BeritaController::class, 'toggleStatus']);
+
+    // R3: Layanan / Perawatan Klinik
+    Route::get('/admin-area/layanan', [LayananController::class, 'index']);
+    Route::get('/admin-area/layanan/new', [LayananController::class, 'create']);
+    Route::post('/admin-area/layanan/submit', [LayananController::class, 'store']);
+    Route::get('/admin-area/layanan/edit/{id}', [LayananController::class, 'edit']);
+    Route::post('/admin-area/layanan/edit/update', [LayananController::class, 'update']);
+    Route::get('/admin-area/layanan/delete/{id}', [LayananController::class, 'destroy']);
+    Route::get('/admin-area/layanan/toggle/{id}', [LayananController::class, 'toggleAktif']);
+});
+
+// K1 Fix: Route khusus superadmin — Manajemen Akun Pengguna
+// Hanya akun dengan role 'superadmin' yang dapat mengelola data user lain.
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/admin-area/akun', [AdminController::class, 'account']);
     Route::post('/admin-area/akun', [AkunController::class, 'account_search']);
-    Route::get('/admin-area/akun/detail', [AkunController::class, 'account_detail']);
     Route::get('/admin-area/akun/new', [AdminController::class, 'account_new']);
     Route::post('/admin-area/akun/submit', [AkunController::class, 'account_submit']);
     Route::get('/admin-area/akun/edit/{id}/{from}', [AkunController::class, 'account_edit']);
