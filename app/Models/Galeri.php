@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
+use App\Support\IdGenerator;
 
 class Galeri extends Model
 {
-    use HasFactory, SoftDeletes; // P3: SoftDeletes agar data tidak terhapus permanen
+    use HasFactory, SoftDeletes, \App\Models\Concerns\ClearsHomeCache; // P3: SoftDeletes agar data tidak terhapus permanen
 
     protected $table      = 'galeri';
     protected $primaryKey = 'id_galeri';
@@ -30,26 +30,26 @@ class Galeri extends Model
      */
     public function kategoriRelasi()
     {
-        return $this->belongsTo(\Illuminate\Support\Facades\DB::table('kategori'), 'id_kategori', 'id_kategori');
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
     }
 
     public $incrementing = false;
     public $timestamps   = false;
 
     /**
-     * Query builder untuk tabel galeri (DB facade).
+     * Query builder galeri (Eloquent, sudah menghormati soft delete).
      */
     public static function vgaleri()
     {
-        return DB::table('galeri');
+        return Galeri::query();
     }
 
     /**
-     * Query builder untuk tabel kategori (DB facade).
+     * Query builder kategori (Eloquent via model Kategori).
      */
     public static function kategori()
     {
-        return DB::table('kategori');
+        return Kategori::query();
     }
 
     /**
@@ -59,7 +59,7 @@ class Galeri extends Model
      */
     public static function deleteImage(string $id): void
     {
-        $item = Galeri::where('id_galeri', $id)->first();
+        $item = Galeri::withTrashed()->where('id_galeri', $id)->first();
 
         if ($item && !empty($item->images)) {
             $filepath = public_path('/img/gallery/' . $item->images);
@@ -77,39 +77,16 @@ class Galeri extends Model
      */
     public static function galleryGenerateID(): string
     {
-        return DB::transaction(function () {
-            $lastId = Galeri::lockForUpdate()->max('id_galeri');
-
-            if ($lastId) {
-                preg_match('/\d+$/', $lastId, $matches);
-                $num = isset($matches[0]) ? (int) $matches[0] : 0;
-            } else {
-                $num = 0;
-            }
-
-            return 'GL-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
-        });
+        return IdGenerator::next('GL-', Galeri::withTrashed(), 'id_galeri');
     }
 
     /**
      * Menghasilkan ID unik untuk kategori galeri dengan format KT-001.
-     * K2-Fix: Dibungkus DB::transaction() + lockForUpdate() untuk mencegah race condition.
      *
      * @return string Contoh: KT-001, KT-002, KT-010
      */
     public static function categoryGenerateID(): string
     {
-        return DB::transaction(function () {
-            $lastId = DB::table('kategori')->lockForUpdate()->max('id_kategori');
-
-            if ($lastId) {
-                preg_match('/\d+$/', $lastId, $matches);
-                $num = isset($matches[0]) ? (int) $matches[0] : 0;
-            } else {
-                $num = 0;
-            }
-
-            return 'KT-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
-        });
+        return Kategori::generateID();
     }
 }

@@ -9,33 +9,32 @@ class DokterController extends Controller
 {
     /**
      * Menyimpan data dokter baru ke database.
-     * P1-Fix: Tambah validasi tipe file gambar.
-     * P4-Fix: Tambah PHPDoc dan rapikan kode.
      */
-    public function dokter_submit(Request $request) {
-        // P1: Validasi file gambar sebelum proses
+    public function dokter_submit(Request $request)
+    {
         $request->validate([
             'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
+        $idDokter = Dokter::dokterGenerateID();
         $img     = $request->foto;
         $imgext  = $request->foto->extension();
-        $imgname = time().'-'.Dokter::dokterGenerateID().'.'.$imgext;
+        $imgname = time() . '-' . $idDokter . '.' . $imgext;
 
         $request->merge([
-            'id_dokter' => Dokter::dokterGenerateID(),
+            'id_dokter' => $idDokter,
             'images'    => $imgname,
         ]);
 
         $valo = $request->validate([
-            'id_dokter'    => 'required|unique:dokter|max:15',
-            'nama_dokter'  => 'required|max:50',
-            'no_hp_dokter' => 'required',
-            'email_dokter' => 'required|email',
-            'jadwal_dokter'=> 'required',
-            'str_dokter'   => 'required',
-            'sip_dokter'   => 'required',
-            'images'       => 'required',
+            'id_dokter'     => 'required|unique:dokter,id_dokter|max:20',
+            'nama_dokter'   => 'required|max:100',
+            'no_hp_dokter'  => 'required|max:25',
+            'email_dokter'  => 'required|email|max:100',
+            'jadwal_dokter' => 'required|max:255',
+            'str_dokter'    => 'required|max:50',
+            'sip_dokter'    => 'required|max:50',
+            'images'        => 'required',
         ]);
 
         $query = Dokter::create($valo);
@@ -44,121 +43,118 @@ class DokterController extends Controller
 
         if ($query) {
             return redirect('/admin-area/dokter')->with('success', 'Berhasil menambahkan data dokter.');
-        } else {
-            return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam menambahkan data dokter.');
         }
+
+        return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam menambahkan data dokter.');
     }
 
     /**
      * Menampilkan form edit data dokter berdasarkan ID terenkripsi.
-     * K11 Fix: Gunakan firstOrFail() bukan get() karena hanya butuh 1 record.
      */
-    public function dokter_edit($id) {
+    public function dokter_edit($id)
+    {
         $dokter = Dokter::where('id_dokter', decrypt($id))->firstOrFail();
 
         return view('admin.dokter_edit', [
             'dokter' => $dokter,
             'title'  => 'Edit Data Dokter',
-            'menu'   => 'Dokter'
+            'menu'   => 'dokter',
         ]);
     }
 
     /**
-     * Menghapus data dokter beserta foto profil-nya.
-     * Dengan SoftDeletes aktif, data tidak terhapus permanen.
+     * Menghapus data dokter (Soft Delete).
+     * #11 Fix: File gambar JANGAN dihapus saat soft-delete (hanya saat force delete di trash).
      */
-    public function dokter_delete($id) {
-        Dokter::deleteImage(decrypt($id));
-
+    public function dokter_delete($id)
+    {
         $query = Dokter::destroy(decrypt($id));
 
         if ($query) {
             return redirect('/admin-area/dokter')->with('success', 'Berhasil menghapus data dokter.');
-        } else {
-            return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam menghapus data dokter.');
         }
+
+        return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam menghapus data dokter.');
     }
 
     /**
      * Memperbarui data dokter yang sudah ada.
-     * P1-Fix: Tambah validasi tipe file gambar jika ada file baru.
+     * #17 Fix: Validasi id_dokter harus terdaftar di tabel dokter.
      */
-    public function dokter_update(Request $request) {
-        $img = $request->foto;
+    public function dokter_update(Request $request)
+    {
+        $request->validate([
+            'id_dokter' => 'required|exists:dokter,id_dokter',
+        ]);
+
+        $dokter = Dokter::where('id_dokter', $request->id_dokter)->firstOrFail();
+        $img    = $request->foto;
 
         if ($img != null) {
-            // P1: Validasi tipe file gambar
             $request->validate([
-                'foto' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                'foto'          => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                'nama_dokter'   => 'required|max:100',
+                'no_hp_dokter'  => 'required|max:25',
+                'email_dokter'  => 'required|email|max:100',
+                'jadwal_dokter' => 'required|max:255',
+                'str_dokter'    => 'required|max:50',
+                'sip_dokter'    => 'required|max:50',
             ]);
 
             $imgext  = $request->foto->extension();
-            $imgname = time().'-'.$request->id_dokter.'.'.$imgext;
-
-            $request->merge([
-                'images' => $imgname,
-            ]);
-
-            $query = $request->validate([
-                'nama_dokter'  => 'required|max:70',
-                'no_hp_dokter' => 'required',
-                'images'       => 'required',
-                'email_dokter' => 'required|email',
-                'jadwal_dokter'=> 'required',
-                'str_dokter'   => 'required',
-                'sip_dokter'   => 'required',
-            ]);
+            $imgname = time() . '-' . $request->id_dokter . '.' . $imgext;
 
             Dokter::deleteImage($request->id_dokter);
-
             $img->move(public_path('/img/dokter'), $imgname);
 
-            $query = Dokter::where('id_dokter', $request->id_dokter)->update($query);
+            $data = [
+                'nama_dokter'   => $request->nama_dokter,
+                'no_hp_dokter'  => $request->no_hp_dokter,
+                'email_dokter'  => $request->email_dokter,
+                'jadwal_dokter' => $request->jadwal_dokter,
+                'str_dokter'    => $request->str_dokter,
+                'sip_dokter'    => $request->sip_dokter,
+                'images'        => $imgname,
+            ];
         } else {
-            $query = $request->validate([
-                'nama_dokter'  => 'required|max:70',
-                'no_hp_dokter' => 'required',
-                'email_dokter' => 'required|email',
-                'jadwal_dokter'=> 'required',
-                'str_dokter'   => 'required',
-                'sip_dokter'   => 'required',
+            $data = $request->validate([
+                'nama_dokter'   => 'required|max:100',
+                'no_hp_dokter'  => 'required|max:25',
+                'email_dokter'  => 'required|email|max:100',
+                'jadwal_dokter' => 'required|max:255',
+                'str_dokter'    => 'required|max:50',
+                'sip_dokter'    => 'required|max:50',
             ]);
-
-            $query = Dokter::where('id_dokter', $request->id_dokter)->update($query);
         }
 
-        if ($query) {
-            return redirect('/admin-area/dokter')->with('success', 'Berhasil mengedit data dokter.');
-        } else {
-            return redirect('/admin-area/dokter')->with('error', 'Terjadi kesalahan dalam mengedit data dokter.');
-        }
+        $dokter->update($data);
+
+        return redirect('/admin-area/dokter')->with('success', 'Berhasil mengedit data dokter.');
     }
 
     /**
-     * Mencari data dokter berdasarkan ID, nama, atau jadwal.
+     * #12 & #13 Fix: Mencari data dokter via GET request dengan pagination yang membawa parameter pencarian.
      */
-    public function dokter_search(Request $request) {
-        $request->merge([
-            'cari' => '%'.$request->cari.'%',
-        ]);
+    public function dokter_search(Request $request)
+    {
+        $keyword = trim((string) $request->input('cari'));
 
-        $validated = $request->validate([
-            'cari' => 'required',
-        ]);
-
-        $query = Dokter::where('id_dokter', 'like', $validated)
-                       ->orWhere('nama_dokter', 'like', $validated)
-                       ->orWhere('jadwal_dokter', 'like', $validated)
-                       ->paginate(8);
-
-        if ($query->isNotEmpty()) {
-            return view('admin.dokter', [
-                'title'  => 'Hasil Pencarian : '.$request->cari,
-                'menu'   => 'dokter',
-                'dokter' => $query,
-            ]);
-        } else {
-            return redirect()->back()->with('message', 'Data dokter tidak ditemukan.');
+        if ($keyword === '') {
+            return redirect('/admin-area/dokter');
         }
+
+        $query = Dokter::where(function ($q) use ($keyword) {
+            $q->where('id_dokter', 'like', "%{$keyword}%")
+              ->orWhere('nama_dokter', 'like', "%{$keyword}%")
+              ->orWhere('jadwal_dokter', 'like', "%{$keyword}%")
+              ->orWhere('email_dokter', 'like', "%{$keyword}%");
+        })->paginate(8)->withQueryString();
+
+        return view('admin.dokter', [
+            'title'  => 'Hasil Pencarian: ' . $keyword,
+            'menu'   => 'dokter',
+            'dokter' => $query,
+            'cari'   => $keyword,
+        ]);
     }
 }

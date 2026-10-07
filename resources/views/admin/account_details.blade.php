@@ -55,7 +55,9 @@
                             <p class="mb-0">Aksi ini tidak dapat dibatalkan, tolong gunakan fitur ini dengan baik.</p>
                         </div>
                     </div>
-                    <form id="formAccountDeactivation" action="/admin-area/akun/delete/{{ Crypt::encrypt(Auth::user()->id) }}/1" method="GET" enctype="multipart/form-data">
+                    <form id="formAccountDeactivation" action="/admin-area/akun/delete/{{ Crypt::encrypt(Auth::user()->id) }}/1" method="POST">
+                        @csrf
+                        @method('DELETE')
                         <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" name="accountActivation" required>
                             <label class="form-check-label" for="accountActivation">Saya ingin menghapus akun

@@ -12,6 +12,7 @@ use App\Models\Pasien;
 use App\Models\Kegiatan;
 use App\Models\Berita;
 use App\Models\Layanan;
+use App\Models\Kategori;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,9 +22,10 @@ class AdminController extends Controller
     /**
      * Halaman Dashboard / Beranda Admin.
      */
-    public function index() {
+    public function index()
+    {
         $countinformation = Tentang::count();
-        $countcategory    = Galeri::kategori()->count();
+        $countcategory    = Kategori::count();
         $countgaleri      = Galeri::count();
         $countkegiatan    = Kegiatan::count();
         $countuser        = User::count();
@@ -31,7 +33,7 @@ class AdminController extends Controller
         $countdokter      = Dokter::count();
         $countervisits    = Counter::getCounterData();
 
-        // R4: Analytics — statistik pasien per bulan (12 bulan terakhir)
+        // Analytics — statistik pasien per bulan (12 bulan terakhir)
         $driver    = DB::connection()->getDriverName();
         $monthExpr = $driver === 'sqlite' ? "cast(strftime('%m', tanggal_janji) as integer)" : 'MONTH(tanggal_janji)';
 
@@ -49,15 +51,31 @@ class AdminController extends Controller
             $chartPasienBulanan[] = $pasienPerBulan->has($m) ? $pasienPerBulan[$m]->total : 0;
         }
 
-        // R4: Statistik status pasien
+        // Statistik status pasien
         $statusStats = Pasien::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->get()
             ->keyBy('status');
 
-        // R5: Jumlah berita & layanan untuk dashboard
         $countberita  = Berita::count();
         $countlayanan = Layanan::count();
+
+        // Janji Temu Hari Ini & Metrik Finansial (#6, #33)
+        $today = now()->format('Y-m-d');
+        $pasienHariIni = Pasien::whereDate('tanggal_janji', $today)
+            ->orderBy('tanggal_janji', 'asc')
+            ->limit(5)
+            ->get();
+        $countHariIni = Pasien::whereDate('tanggal_janji', $today)->count();
+        $countPending = Pasien::where('status', 'pending')->count();
+
+        $pendapatanBulanIni = (int) Pasien::whereYear('tanggal_janji', date('Y'))
+            ->whereMonth('tanggal_janji', date('m'))
+            ->where('status', 'completed')
+            ->sum('total_harga_pasien');
+
+        $pendapatanTotal = (int) Pasien::where('status', 'completed')
+            ->sum('total_harga_pasien');
 
         return view('admin.index', [
             'title'                => 'Beranda',
@@ -74,13 +92,23 @@ class AdminController extends Controller
             'status_stats'         => $statusStats,
             'berita_count'         => $countberita,
             'layanan_count'        => $countlayanan,
+            'pasien_hari_ini'      => $pasienHariIni,
+            'count_hari_ini'       => $countHariIni,
+            'count_pending'        => $countPending,
+            'pendapatan_bulan_ini' => $pendapatanBulanIni,
+            'pendapatan_total'     => $pendapatanTotal,
         ]);
     }
 
     /**
-     * Halaman Data Dokter.
+     * Halaman Data Dokter (mendukung pencarian GET #12).
      */
-    public function dokter() {
+    public function dokter(Request $request)
+    {
+        if ($request->filled('cari')) {
+            return app(DokterController::class)->dokter_search($request);
+        }
+
         $dokter = Dokter::paginate(8);
 
         return view('admin.dokter', [
@@ -93,7 +121,8 @@ class AdminController extends Controller
     /**
      * Form Tambah Dokter Baru.
      */
-    public function dokter_new() {
+    public function dokter_new()
+    {
         return view('admin.dokter_new', [
             'menu'  => "dokter",
             'title' => "Tambah Dokter Baru",
@@ -101,45 +130,29 @@ class AdminController extends Controller
     }
 
     /**
-     * R3: Halaman Manajemen Layanan Klinik.
+     * Halaman Galeri Foto (mendukung pencarian GET #12).
      */
-    public function layanan() {
-        $layanans = Layanan::orderBy('urutan')->paginate(10);
-        return view('admin.layanan', [
-            'title'    => 'Manajemen Layanan Klinik',
-            'menu'     => 'layanan',
-            'layanans' => $layanans,
-        ]);
-    }
+    public function gallery(Request $request)
+    {
+        if ($request->filled('cari')) {
+            return app(GaleriController::class)->gallery_search($request);
+        }
 
-    /**
-     * R3: Form Tambah Layanan Baru.
-     */
-    public function layanan_new() {
-        return view('admin.layanan_new', [
-            'title' => 'Tambah Layanan Baru',
-            'menu'  => 'layanan',
-        ]);
-    }
-
-    /**
-     * Halaman Galeri Foto.
-     */
-    public function gallery() {
         $gallery = Galeri::paginate(8);
 
         return view('admin.gallery', [
             'title'   => "Galeri Foto",
             'menu'    => "galeri",
             'gallery' => $gallery,
-       ]);
+        ]);
     }
 
     /**
      * Form Tambah Galeri Foto Baru.
      */
-    public function gallery_new() {
-        $category = Galeri::kategori()->get();
+    public function gallery_new()
+    {
+        $category = Kategori::all();
 
         return view('admin.gallery_new', [
             'category' => $category,
@@ -151,7 +164,8 @@ class AdminController extends Controller
     /**
      * Halaman Data Agenda Kegiatan Klinik.
      */
-    public function activity() {
+    public function activity()
+    {
         $activities = Kegiatan::paginate(8);
 
         return view('admin.activity', [
@@ -164,7 +178,8 @@ class AdminController extends Controller
     /**
      * Form Tambah Agenda Kegiatan Baru.
      */
-    public function activity_new() {
+    public function activity_new()
+    {
         return view('admin.activity_new', [
             'menu'  => "kegiatan",
             'title' => 'Tambah Agenda Kegiatan Baru',
@@ -174,7 +189,8 @@ class AdminController extends Controller
     /**
      * Halaman Informasi Umum Klinik.
      */
-    public function about() {
+    public function about()
+    {
         $about = Tentang::get();
 
         return view('admin.about', [
@@ -185,10 +201,15 @@ class AdminController extends Controller
     }
 
     /**
-     * Halaman Kategori Galeri Foto.
+     * Halaman Kategori Galeri Foto (mendukung pencarian GET #12).
      */
-    public function kategori() {
-        $category = Galeri::kategori()->paginate(20);
+    public function kategori(Request $request)
+    {
+        if ($request->filled('cari')) {
+            return app(GaleriController::class)->kategori_search($request);
+        }
+
+        $category = Kategori::paginate(20);
 
         return view('admin.gallery_category', [
             'category' => $category,
@@ -200,7 +221,8 @@ class AdminController extends Controller
     /**
      * Form Tambah Kategori Foto Baru.
      */
-    public function kategori_new() {
+    public function kategori_new()
+    {
         return view('admin.gallery_category_new', [
             'menu'  => "kategori",
             'title' => "Kategori Foto Baru",
@@ -210,16 +232,22 @@ class AdminController extends Controller
     /**
      * Halaman Form Login Admin.
      */
-    public function login() {
+    public function login()
+    {
         return view('admin.login', [
             'title' => 'Login Admin',
         ]);
     }
 
     /**
-     * Halaman Daftar Pengguna / Akun Admin.
+     * Halaman Daftar Pengguna / Akun Admin (mendukung pencarian GET #12).
      */
-    public function account() {
+    public function account(Request $request)
+    {
+        if ($request->filled('cari')) {
+            return app(AkunController::class)->account_search($request);
+        }
+
         $account = User::paginate(20);
 
         return view('admin.account', [
@@ -232,7 +260,8 @@ class AdminController extends Controller
     /**
      * Form Tambah Akun Admin Baru.
      */
-    public function account_new() {
+    public function account_new()
+    {
         return view('admin.account_new', [
             'menu'  => "pengguna",
             'title' => 'Tambah Akun Admin Baru',
@@ -240,23 +269,19 @@ class AdminController extends Controller
     }
 
     /**
-     * Halaman Data Pasien Reservasi.
+     * Halaman Data Pasien Reservasi (mendukung pencarian GET #12).
      */
-    public function pasien() {
-        $pasien = Pasien::orderBy('id_pasien', 'desc')->paginate(10);
-
-        return view('admin.pasien', [
-            'title'  => 'Data Janji Temu Pasien',
-            'menu'   => 'pasien',
-            'pasien' => $pasien,
-        ]);
+    public function pasien(Request $request)
+    {
+        // Pencarian + filter (status, dokter, rentang tanggal) ditangani satu tempat.
+        return app(PasienController::class)->pasien_search($request);
     }
 
     /**
      * Halaman Sampah / Trash Bin (Melihat data soft deleted).
      */
-    public function trash() {
-        // K8 Fix: Gunakan paginate agar tidak memuat semua data terhapus sekaligus
+    public function trash()
+    {
         $deletedPasien   = Pasien::onlyTrashed()->paginate(10, ['*'], 'pasien_page');
         $deletedDokter   = Dokter::onlyTrashed()->paginate(10, ['*'], 'dokter_page');
         $deletedGaleri   = Galeri::onlyTrashed()->paginate(10, ['*'], 'galeri_page');
@@ -275,8 +300,9 @@ class AdminController extends Controller
     /**
      * Memulihkan (Restore) data soft deleted.
      */
-    public function restore($type, $id) {
-        $realId = decrypt($id);
+    public function restore($type, $id)
+    {
+        $realId   = decrypt($id);
         $restored = false;
 
         if ($type === 'pasien') {
@@ -290,7 +316,7 @@ class AdminController extends Controller
         }
 
         if ($restored) {
-            // K14 Fix: Log aksi restore untuk audit trail
+            \App\Models\Dokter::flushHomeCache(); // query builder tidak memicu event model
             Log::info('Data restored from trash', [
                 'type'    => $type,
                 'id'      => $realId,
@@ -305,13 +331,16 @@ class AdminController extends Controller
     /**
      * Menghapus permanen (Force Delete) data soft deleted.
      */
-    public function force_delete($type, $id) {
-        $realId = decrypt($id);
+    public function force_delete($type, $id)
+    {
+        $realId  = decrypt($id);
         $deleted = false;
 
         if ($type === 'pasien') {
             $item = Pasien::onlyTrashed()->where('id_pasien', $realId)->first();
-            if ($item) $deleted = $item->forceDelete();
+            if ($item) {
+                $deleted = $item->forceDelete();
+            }
         } elseif ($type === 'dokter') {
             $item = Dokter::onlyTrashed()->where('id_dokter', $realId)->first();
             if ($item) {
@@ -333,7 +362,6 @@ class AdminController extends Controller
         }
 
         if ($deleted) {
-            // K14 Fix: Log aksi force delete untuk audit trail
             Log::warning('Data permanently deleted', [
                 'type'    => $type,
                 'id'      => $realId,

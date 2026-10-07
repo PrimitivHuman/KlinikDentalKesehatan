@@ -131,13 +131,7 @@
 
         <script>
           @if ($title === 'Beranda')
-            window.onload = function() {
-              getLocation();
-            }
-
-            var chart_data = [{{ $countervisit[1] }}, {{ $countervisit[2] }}, {{ $countervisit[3] }}, {{ $countervisit[4] }}, {{ $countervisit[5] }}, {{ $countervisit[6] }}, {{ $countervisit[7] }}];
-            
-            console.log(chart_data);
+            var chart_data = [{{ $countervisit[1] ?? 0 }}, {{ $countervisit[2] ?? 0 }}, {{ $countervisit[3] ?? 0 }}, {{ $countervisit[4] ?? 0 }}, {{ $countervisit[5] ?? 0 }}, {{ $countervisit[6] ?? 0 }}, {{ $countervisit[7] ?? 0 }}];
           @endif
         </script>
 

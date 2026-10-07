@@ -122,6 +122,27 @@ h1, h2, h3, h4, h5, h6,
   color: #FFFFFF !important;
 }
 
+/* Hilangkan strip/indikator biru (#696cff) & pseudo-elements bawaan template Sneat */
+.layout-wrapper:not(.layout-horizontal) .bg-menu-theme .menu-inner > .menu-item.active:before,
+.bg-menu-theme .menu-inner > .menu-item.active:before,
+.menu-item.active::before,
+.menu-item.active:before,
+.menu-item::before,
+.menu-item:before,
+.menu-item.active::after,
+.menu-item.active:after {
+  display: none !important;
+  content: none !important;
+}
+
+.menu-inner-shadow {
+  display: none !important;
+}
+
+.app-brand .layout-menu-toggle {
+  background-color: var(--admin-primary) !important;
+}
+
 /* ── Top Navbar ─────────────────────────────────────────────────────────── */
 .layout-navbar {
   background: rgba(255, 255, 255, 0.85) !important;
@@ -313,18 +334,88 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .form-control, .form-select {
-  border: 1.5px solid var(--admin-border) !important;
-  border-radius: var(--admin-radius-md) !important;
-  padding: 10px 14px !important;
-  font-size: 14px !important;
-  color: var(--admin-text-heading) !important;
-  transition: var(--admin-transition) !important;
+  border: 1.5px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--admin-text-heading);
+  transition: var(--admin-transition);
 }
 
 .form-control:focus, .form-select:focus {
+  border-color: var(--admin-border-focus);
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15);
+  outline: none;
+}
+
+/* ── Modern Placeholder System ─────────────────────────────────────────── */
+.form-control::placeholder,
+.form-select::placeholder,
+textarea::placeholder,
+input::placeholder {
+  color: #94A3B8 !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  opacity: 0.9 !important;
+}
+
+/* ── Unified Search Bar Component ───────────────────────────────────────── */
+.input-group-search {
+  display: flex !important;
+  align-items: center !important;
+  background: #FFFFFF !important;
+  border: 1.5px solid var(--admin-border) !important;
+  border-radius: 8px !important;
+  transition: var(--admin-transition) !important;
+  overflow: hidden !important;
+}
+
+.input-group-search:focus-within {
   border-color: var(--admin-border-focus) !important;
-  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15) !important;
-  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15) !important;
+}
+
+.input-group-search .search-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 6px 0 12px !important;
+  color: #94A3B8 !important;
+  font-size: 1.15rem !important;
+  flex-shrink: 0 !important;
+  pointer-events: none !important;
+}
+
+.input-group-search .form-control {
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 12px 8px 4px !important;
+  font-size: 13px !important;
+  height: 36px !important;
+  background: transparent !important;
+  width: 100% !important;
+  color: var(--admin-text-heading) !important;
+}
+
+.input-group-search .form-control:focus {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ── Input Group Fixes (Joint Borders & Rounded Edges) ─────────────────── */
+.input-group {
+  border-radius: 8px;
+}
+.input-group > :first-child {
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+}
+.input-group > :last-child {
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+.input-group > :not(:first-child):not(:last-child) {
+  border-radius: 0 !important;
 }
 
 /* ── Auth / Login Page Minimalist ───────────────────────────────────────── */

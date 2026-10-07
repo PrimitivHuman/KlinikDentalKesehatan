@@ -15,20 +15,25 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        // Hapus akun lama jika sudah ada (agar tidak duplikat)
-        User::where('email', 'admin@klinikfamdentalcare.com')->delete();
+        $adminEmail    = env('ADMIN_EMAIL', 'admin@klinikfamdentalcare.com');
+        $adminPassword = env('ADMIN_PASSWORD', 'Admin@12345');
+        $adminName     = env('ADMIN_NAME', 'Administrator');
 
-        User::create([
-            'id'           => 'AK-1',
-            'name'         => 'Administrator',
-            'email'        => 'admin@klinikfamdentalcare.com',
-            'password'     => Hash::make('Admin@12345'),
-            'role'         => 'superadmin',
-            'profile_pict' => 'default.png',
-        ]);
+        // Gunakan updateOrCreate agar data admin sebelumnya tidak terhapus
+        $admin = User::firstOrNew(['email' => $adminEmail]);
 
-        $this->command->info('✅ Akun Admin berhasil dibuat!');
-        $this->command->info('   Email    : admin@klinikfamdentalcare.com');
-        $this->command->info('   Password : Admin@12345');
+        if (!$admin->exists) {
+            $admin->id           = User::generateID();
+            $admin->profile_pict = 'default.png';
+        }
+
+        $admin->name     = $adminName;
+        $admin->password = Hash::make($adminPassword);
+        $admin->role     = 'superadmin';
+        $admin->save();
+
+        $this->command->info('✅ Akun Admin berhasil disiapkan!');
+        $this->command->info("   Email : {$adminEmail}");
+        $this->command->comment('   Password diambil dari environment (ADMIN_PASSWORD).');
     }
 }

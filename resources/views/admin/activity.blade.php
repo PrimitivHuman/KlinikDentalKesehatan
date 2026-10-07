@@ -31,9 +31,13 @@
                         <a href="/admin-area/kegiatan/edit/{{ Crypt::encrypt($data->id_kegiatan) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bx bx-edit-alt"></i> Edit
                         </a>
-                        <a href="/admin-area/kegiatan/delete/{{ Crypt::encrypt($data->id_kegiatan) }}" onclick="return confirm('Hapus kegiatan {{ $data->judul_kegiatan }}?')" class="btn btn-sm btn-outline-danger">
-                            <i class="bx bx-trash"></i> Hapus
-                        </a>
+                        <form action="/admin-area/kegiatan/delete/{{ Crypt::encrypt($data->id_kegiatan) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus kegiatan {{ $data->judul_kegiatan }}?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bx bx-trash"></i> Hapus
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

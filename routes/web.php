@@ -16,41 +16,52 @@ use App\Http\Controllers\LayananController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application.
-|
 */
 
-// Public Routes
-Route::get('/', [MainController::class, 'index']);
-Route::get('/appointment', [MainController::class, 'appointment']);
-Route::post('/appointment', [PasienController::class, 'pasien_submit']);
+// Public Routes (dengan statistik pengunjung otomatis #7)
+Route::middleware(['track.visitor'])->group(function () {
+    Route::get('/', [MainController::class, 'index'])->name('home');
+    Route::get('/appointment', [MainController::class, 'appointment'])->name('appointment');
+    Route::post('/appointment', [PasienController::class, 'pasien_submit'])->middleware('throttle:10,1');
+
+    // #18 Fix: Rute Publik Artikel & Berita
+    Route::get('/berita', [MainController::class, 'berita'])->name('berita.index');
+    Route::get('/berita/{slug}', [MainController::class, 'berita_detail'])->name('berita.detail');
+
+    // Rute Publik Agenda Kegiatan Klinik
+    Route::get('/agenda', [MainController::class, 'agenda'])->name('agenda.index');
+    Route::get('/agenda/{id}', [MainController::class, 'agenda_detail'])->name('agenda.detail');
+
+    // #38 Fix: XML Sitemap untuk SEO Search Engine
+    Route::get('/sitemap.xml', [MainController::class, 'sitemap'])->name('sitemap');
+});
 
 // Auth Routes
 Route::get('/login', [AdminController::class, 'login'])->name('login')->middleware('guest');
 Route::post('/login', [AkunController::class, 'login'])->middleware('throttle:5,1');
-Route::get('/logout', [AkunController::class, 'logout'])->middleware('auth');
+Route::match(['get', 'post'], '/logout', [AkunController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Admin Authenticated Routes (semua user yang sudah login)
 Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/admin-area', [AdminController::class, 'index']);
+    Route::get('/admin-area', [AdminController::class, 'index'])->name('admin.dashboard');
 
     // Pengaturan profil akun sendiri
     Route::get('/admin-area/pengaturan', [AkunController::class, 'settings']);
     Route::post('/admin-area/pengaturan/update', [AkunController::class, 'settings_update']);
 
-    // Detail profil akun sendiri (bisa diakses semua role)
+    // Detail profil akun sendiri
     Route::get('/admin-area/akun/detail', [AkunController::class, 'account_detail']);
 
-    // Pasien Management
-    Route::get('/admin-area/pasien', [AdminController::class, 'pasien']);
+    // Pasien Management (#2: POST/DELETE didukung, #12: GET search)
+    Route::get('/admin-area/pasien', [AdminController::class, 'pasien'])->name('admin.pasien');
+    Route::match(['get', 'post'], '/admin-area/pasien/search', [PasienController::class, 'pasien_search']);
     Route::post('/admin-area/pasien', [PasienController::class, 'pasien_search']);
     Route::get('/admin-area/pasien/edit/{id}', [PasienController::class, 'pasien_edit']);
     Route::get('/admin-area/pasien/edit/{id}/{from}', [PasienController::class, 'pasien_edit']);
     Route::post('/admin-area/pasien/edit/update', [PasienController::class, 'pasien_update']);
-    Route::get('/admin-area/pasien/delete/{id}', [PasienController::class, 'pasien_delete']);
-    Route::get('/admin-area/pasien/status/{id}/{status}', [PasienController::class, 'pasien_status_update']);
+    Route::match(['get', 'delete'], '/admin-area/pasien/delete/{id}', [PasienController::class, 'pasien_delete']);
+    Route::match(['get', 'post', 'patch'], '/admin-area/pasien/status/{id}/{status}', [PasienController::class, 'pasien_status_update']);
     Route::get('/admin-area/pasien/invoice/{id}', [PasienController::class, 'pasien_invoice']);
     Route::get('/export-data', [PasienController::class, 'export'])->name('Pasien.export');
 
@@ -60,35 +71,38 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin-area/kegiatan/submit', [KegiatanController::class, 'activity_submit']);
     Route::get('/admin-area/kegiatan/edit/{id}', [KegiatanController::class, 'activity_edit']);
     Route::post('/admin-area/kegiatan/edit/update', [KegiatanController::class, 'activity_update']);
-    Route::get('/admin-area/kegiatan/delete/{id}', [KegiatanController::class, 'activity_delete']);
+    Route::match(['get', 'delete'], '/admin-area/kegiatan/delete/{id}', [KegiatanController::class, 'activity_delete']);
 
     // Dokter Management
-    Route::get('/admin-area/dokter', [AdminController::class, 'dokter']);
+    Route::get('/admin-area/dokter', [AdminController::class, 'dokter'])->name('admin.dokter');
+    Route::match(['get', 'post'], '/admin-area/dokter/search', [DokterController::class, 'dokter_search']);
     Route::post('/admin-area/dokter', [DokterController::class, 'dokter_search']);
     Route::get('/admin-area/dokter/new', [AdminController::class, 'dokter_new']);
     Route::post('/admin-area/dokter/submit', [DokterController::class, 'dokter_submit']);
     Route::get('/admin-area/dokter/edit/{id}', [DokterController::class, 'dokter_edit']);
     Route::post('/admin-area/dokter/edit/update', [DokterController::class, 'dokter_update']);
-    Route::get('/admin-area/dokter/delete/{id}', [DokterController::class, 'dokter_delete']);
+    Route::match(['get', 'delete'], '/admin-area/dokter/delete/{id}', [DokterController::class, 'dokter_delete']);
 
     // Galeri Management
-    Route::get('/admin-area/galeri', [AdminController::class, 'gallery']);
+    Route::get('/admin-area/galeri', [AdminController::class, 'gallery'])->name('admin.galeri');
+    Route::match(['get', 'post'], '/admin-area/galeri/search', [GaleriController::class, 'gallery_search']);
     Route::post('/admin-area/galeri', [GaleriController::class, 'gallery_search']);
     Route::get('/admin-area/galeri/new', [AdminController::class, 'gallery_new']);
     Route::post('/admin-area/galeri/submit', [GaleriController::class, 'gallery_submit']);
     Route::get('/admin-area/galeri/edit/{id}', [GaleriController::class, 'gallery_edit']);
     Route::post('/admin-area/galeri/edit/update', [GaleriController::class, 'gallery_update']);
-    Route::get('/admin-area/galeri/delete/{id}', [GaleriController::class, 'gallery_delete']);
+    Route::match(['get', 'delete'], '/admin-area/galeri/delete/{id}', [GaleriController::class, 'gallery_delete']);
 
     // Kategori Galeri
-    Route::get('/admin-area/kategori-galeri', [AdminController::class, 'kategori']);
+    Route::get('/admin-area/kategori-galeri', [AdminController::class, 'kategori'])->name('admin.kategori');
+    Route::match(['get', 'post'], '/admin-area/kategori-galeri/search', [GaleriController::class, 'kategori_search']);
     Route::post('/admin-area/kategori-galeri', [GaleriController::class, 'kategori_search']);
     Route::get('/admin-area/kategori-galeri/new', [AdminController::class, 'kategori_new']);
     Route::post('/admin-area/kategori-galeri/submit', [GaleriController::class, 'kategori_submit']);
     Route::get('/admin-area/kategori-galeri/detail/{id}', [GaleriController::class, 'kategori_details']);
     Route::get('/admin-area/kategori-galeri/edit/{id}', [GaleriController::class, 'kategori_edit']);
     Route::post('/admin-area/kategori-galeri/edit/update', [GaleriController::class, 'kategori_update']);
-    Route::get('/admin-area/kategori-galeri/delete/{id}', [GaleriController::class, 'kategori_delete']);
+    Route::match(['get', 'delete'], '/admin-area/kategori-galeri/delete/{id}', [GaleriController::class, 'kategori_delete']);
 
     // Informasi Umum / About
     Route::get('/admin-area/informasi-umum', [AdminController::class, 'about']);
@@ -96,39 +110,41 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin-area/informasi-umum/edit-deskripsi', [TentangController::class, 'informasi_edit']);
     Route::post('/admin-area/informasi-umum/edit-visi', [TentangController::class, 'visi_edit']);
     Route::post('/admin-area/informasi-umum/edit-misi', [TentangController::class, 'misi_edit']);
+    // #19 Fix: Route tupoksi_edit
+    Route::post('/admin-area/informasi-umum/edit-tupoksi', [TentangController::class, 'tupoksi_edit']);
 
     // Trash / Recycle Bin
     Route::get('/admin-area/trash', [AdminController::class, 'trash']);
-    Route::get('/admin-area/trash/restore/{type}/{id}', [AdminController::class, 'restore']);
-    Route::get('/admin-area/trash/force-delete/{type}/{id}', [AdminController::class, 'force_delete']);
+    Route::match(['get', 'post'], '/admin-area/trash/restore/{type}/{id}', [AdminController::class, 'restore']);
+    Route::match(['get', 'delete', 'post'], '/admin-area/trash/force-delete/{type}/{id}', [AdminController::class, 'force_delete']);
 
-    // R2: Berita / Artikel Klinik
+    // Berita / Artikel Klinik
     Route::get('/admin-area/berita', [BeritaController::class, 'index']);
     Route::get('/admin-area/berita/new', [BeritaController::class, 'create']);
     Route::post('/admin-area/berita/submit', [BeritaController::class, 'store']);
     Route::get('/admin-area/berita/edit/{id}', [BeritaController::class, 'edit']);
     Route::post('/admin-area/berita/edit/update', [BeritaController::class, 'update']);
-    Route::get('/admin-area/berita/delete/{id}', [BeritaController::class, 'destroy']);
-    Route::get('/admin-area/berita/toggle/{id}', [BeritaController::class, 'toggleStatus']);
+    Route::match(['get', 'delete'], '/admin-area/berita/delete/{id}', [BeritaController::class, 'destroy']);
+    Route::match(['get', 'post'], '/admin-area/berita/toggle/{id}', [BeritaController::class, 'toggleStatus']);
 
-    // R3: Layanan / Perawatan Klinik
+    // Layanan / Perawatan Klinik
     Route::get('/admin-area/layanan', [LayananController::class, 'index']);
     Route::get('/admin-area/layanan/new', [LayananController::class, 'create']);
     Route::post('/admin-area/layanan/submit', [LayananController::class, 'store']);
     Route::get('/admin-area/layanan/edit/{id}', [LayananController::class, 'edit']);
     Route::post('/admin-area/layanan/edit/update', [LayananController::class, 'update']);
-    Route::get('/admin-area/layanan/delete/{id}', [LayananController::class, 'destroy']);
-    Route::get('/admin-area/layanan/toggle/{id}', [LayananController::class, 'toggleAktif']);
+    Route::match(['get', 'delete'], '/admin-area/layanan/delete/{id}', [LayananController::class, 'destroy']);
+    Route::match(['get', 'post'], '/admin-area/layanan/toggle/{id}', [LayananController::class, 'toggleAktif']);
 });
 
-// K1 Fix: Route khusus superadmin — Manajemen Akun Pengguna
-// Hanya akun dengan role 'superadmin' yang dapat mengelola data user lain.
+// Manajemen Akun Pengguna — Khusus Superadmin (#14)
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
-    Route::get('/admin-area/akun', [AdminController::class, 'account']);
+    Route::get('/admin-area/akun', [AdminController::class, 'account'])->name('admin.akun');
+    Route::match(['get', 'post'], '/admin-area/akun/search', [AkunController::class, 'account_search']);
     Route::post('/admin-area/akun', [AkunController::class, 'account_search']);
     Route::get('/admin-area/akun/new', [AdminController::class, 'account_new']);
     Route::post('/admin-area/akun/submit', [AkunController::class, 'account_submit']);
     Route::get('/admin-area/akun/edit/{id}/{from}', [AkunController::class, 'account_edit']);
     Route::post('/admin-area/akun/edit/update', [AkunController::class, 'account_update']);
-    Route::get('/admin-area/akun/delete/{id}/{from}', [AkunController::class, 'account_delete']);
+    Route::match(['get', 'delete'], '/admin-area/akun/delete/{id}/{from}', [AkunController::class, 'account_delete']);
 });

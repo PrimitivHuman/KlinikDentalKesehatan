@@ -31,6 +31,8 @@
           <li><a href="/#doctors" class="text-decoration-none"><i class="bi bi-chevron-right text-teal me-1"></i> Dokter Spesialis</a></li>
           <li><a href="/#about" class="text-decoration-none"><i class="bi bi-chevron-right text-teal me-1"></i> Tentang Klinik</a></li>
           <li><a href="/#gallery" class="text-decoration-none"><i class="bi bi-chevron-right text-teal me-1"></i> Galeri Tindakan</a></li>
+          <li><a href="/berita" class="text-decoration-none"><i class="bi bi-chevron-right text-teal me-1"></i> Artikel Kesehatan Gigi</a></li>
+          <li><a href="/agenda" class="text-decoration-none"><i class="bi bi-chevron-right text-teal me-1"></i> Agenda & Kegiatan</a></li>
           <li><a href="/appointment" class="text-decoration-none"><i class="bi bi-chevron-right text-teal me-1"></i> Reservasi Janji Temu</a></li>
         </ul>
       </div>
@@ -54,12 +56,9 @@
 
     </div>
 
-    <div class="footer-bottom d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <div class="footer-bottom text-center">
       <div>
         &copy; {{ date('Y') }} <strong><span>Klinik FAM Dental Care</span></strong>. Seluruh hak cipta dilindungi.
-      </div>
-      <div class="mt-2 mt-md-0">
-        <a href="/login" class="text-secondary small text-decoration-none">Masuk Area Administrator</a>
       </div>
     </div>
   </div>

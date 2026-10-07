@@ -30,11 +30,13 @@
 
     <nav id="navbar" class="navbar order-last order-lg-0">
       <ul>
-        <li><a class="nav-link scrollto active" href="/#hero">Beranda</a></li>
+        <li><a class="nav-link scrollto {{ (isset($menu) && $menu === 'home') ? 'active' : '' }}" href="/#hero">Beranda</a></li>
         <li><a class="nav-link scrollto" href="/#services">Layanan</a></li>
         <li><a class="nav-link scrollto" href="/#doctors">Dokter Spesialis</a></li>
         <li><a class="nav-link scrollto" href="/#about">Tentang Kami</a></li>
         <li><a class="nav-link scrollto" href="/#gallery">Galeri</a></li>
+        <li><a class="nav-link scrollto {{ (isset($menu) && $menu === 'berita') ? 'active' : '' }}" href="/#berita">Artikel</a></li>
+        <li><a class="nav-link scrollto {{ (isset($menu) && $menu === 'agenda') ? 'active' : '' }}" href="/#agenda">Agenda</a></li>
         <li><a class="nav-link scrollto" href="/#contact">Lokasi & Kontak</a></li>
       </ul>
       <i class="bi bi-list mobile-nav-toggle"></i>

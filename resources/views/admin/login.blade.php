@@ -63,6 +63,66 @@
         font-weight: 600;
         margin-bottom: 12px;
       }
+      /* Modern Pro Input Groups with Unified Focus & Placeholders */
+      .input-group-pro {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid #CBD5E1;
+        border-radius: 12px;
+        background: #FFFFFF;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        overflow: hidden;
+      }
+      .input-group-pro:focus-within {
+        border-color: #0D9488 !important;
+        box-shadow: 0 0 0 3.5px rgba(13, 148, 136, 0.15) !important;
+      }
+      .input-group-pro.is-invalid-group {
+        border-color: #EF4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+      }
+      .input-group-pro .input-icon-lead {
+        padding: 11px 0 11px 14px;
+        color: #94A3B8;
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .input-group-pro .form-control {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 11px 12px 11px 10px !important;
+        font-size: 14px !important;
+        color: #0F172A !important;
+        background: transparent !important;
+        width: 100%;
+      }
+      .input-group-pro .form-control::placeholder {
+        color: #94A3B8 !important;
+        font-size: 13.5px !important;
+        font-weight: 400 !important;
+        opacity: 0.9 !important;
+      }
+      .input-group-pro .btn-toggle-pass {
+        padding: 10px 14px 10px 8px;
+        color: #94A3B8;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        transition: color 0.15s ease-in-out, transform 0.1s ease-in-out;
+        flex-shrink: 0;
+      }
+      .input-group-pro .btn-toggle-pass:hover {
+        color: #0D9488 !important;
+      }
+      .input-group-pro .btn-toggle-pass:active {
+        transform: scale(0.92);
+      }
     </style>
   </head>
 
@@ -100,11 +160,11 @@
           @csrf
           <div class="mb-3">
             <label for="email" class="form-label small fw-semibold text-dark">Alamat Email</label>
-            <div class="input-group">
-              <span class="input-group-text bg-white border-end-0 text-muted"><i class="bx bx-envelope"></i></span>
+            <div class="input-group-pro @error('email') is-invalid-group @enderror">
+              <span class="input-icon-lead"><i class="bx bx-envelope"></i></span>
               <input
                 type="email"
-                class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror"
+                class="form-control"
                 id="email"
                 name="email"
                 placeholder="nama@klinikfamdentalcare.com"
@@ -118,19 +178,21 @@
             @enderror
           </div>
 
-          <div class="mb-4 form-password-toggle">
+          <div class="mb-4">
             <label class="form-label small fw-semibold text-dark" for="password">Kata Sandi</label>
-            <div class="input-group input-group-merge">
-              <span class="input-group-text bg-white border-end-0 text-muted"><i class="bx bx-lock-alt"></i></span>
+            <div class="input-group-pro">
+              <span class="input-icon-lead"><i class="bx bx-lock-alt"></i></span>
               <input
                 type="password"
                 id="password"
-                class="form-control border-start-0 ps-0"
+                class="form-control"
                 name="password"
-                placeholder="••••••••••••"
+                placeholder="Masukkan kata sandi Anda"
                 required
               />
-              <span class="input-group-text cursor-pointer bg-white text-muted"><i class="bx bx-hide"></i></span>
+              <button type="button" class="btn-toggle-pass" id="btnTogglePassword" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi">
+                <i class="bx bx-show" id="iconTogglePassword"></i>
+              </button>
             </div>
           </div>
 
@@ -154,6 +216,33 @@
     <script src="{{ asset('admin/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('admin/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('admin/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('admin/js/main.js') }}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('btnTogglePassword');
+        const passInput = document.getElementById('password');
+        const icon = document.getElementById('iconTogglePassword');
+
+        if (toggleBtn && passInput && icon) {
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const isPass = passInput.getAttribute('type') === 'password';
+            if (isPass) {
+              passInput.setAttribute('type', 'text');
+              icon.className = 'bx bx-hide';
+              toggleBtn.setAttribute('title', 'Sembunyikan kata sandi');
+              toggleBtn.setAttribute('aria-label', 'Sembunyikan kata sandi');
+            } else {
+              passInput.setAttribute('type', 'password');
+              icon.className = 'bx bx-show';
+              toggleBtn.setAttribute('title', 'Tampilkan kata sandi');
+              toggleBtn.setAttribute('aria-label', 'Tampilkan kata sandi');
+            }
+            passInput.focus();
+          });
+        }
+      });
+    </script>
   </body>
 </html>

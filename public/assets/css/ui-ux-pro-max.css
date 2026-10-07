@@ -169,11 +169,11 @@ h1, h2, h3, h4, h5, h6,
 /* ── Hero Section (Minimalist & High-Converting) ────────────────────────── */
 #hero {
   width: 100%;
-  min-height: 88vh;
+  height: auto !important;
+  min-height: auto !important;
   background: radial-gradient(circle at 80% 20%, rgba(204, 251, 241, 0.5) 0%, rgba(240, 253, 250, 0.3) 40%, #FFFFFF 100%) !important;
-  padding: 140px 0 60px 0;
-  display: flex;
-  align-items: center;
+  padding: 135px 0 25px 0 !important;
+  display: block;
   position: relative;
   overflow: hidden;
 }

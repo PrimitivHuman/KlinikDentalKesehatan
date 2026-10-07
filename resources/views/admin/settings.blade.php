@@ -38,15 +38,15 @@
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="old_password" class="form-label">Kata Sandi Lama (Opsional)</label>
-                                <input class="form-field form-control" type="password" id="old_password" name="old_password" placeholder="••••••••" />
+                                <input class="form-field form-control" type="password" id="old_password" name="old_password" placeholder="Masukkan kata sandi lama" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="new_password" class="form-label">Kata Sandi Baru</label>
-                                <input class="form-field form-control" type="password" id="new_password" name="new_password" placeholder="••••••••" />
+                                <input class="form-field form-control" type="password" id="new_password" name="new_password" placeholder="Minimal 8 karakter" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="confirm_password" class="form-label">Konfirmasi Kata Sandi Baru</label>
-                                <input class="form-field form-control" type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" />
+                                <input class="form-field form-control" type="password" id="confirm_password" name="confirm_password" placeholder="Ulangi kata sandi baru" />
                             </div>
                         </div>
                         <div class="mt-2">

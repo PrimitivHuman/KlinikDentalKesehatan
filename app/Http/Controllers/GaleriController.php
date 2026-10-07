@@ -4,166 +4,162 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Galeri;
+use App\Models\Kategori;
 
 class GaleriController extends Controller
 {
     /**
      * Menyimpan foto galeri baru ke database dan storage.
-     * P1-Fix: Tambah validasi tipe file gambar.
-     * P2-Fix: Inisialisasi $query = false agar tidak undefined.
-     *         Tambah id_kategori & nama_kategori ke validated fields.
      */
-    public function gallery_submit(Request $request) {
-        // P1: Validasi file gambar sebelum proses
+    public function gallery_submit(Request $request)
+    {
         $request->validate([
             'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $img    = $request->foto;
-        $imgext = $request->foto->extension();
-        $imgname = time().'-'.Galeri::galleryGenerateID().'.'.$imgext;
+        $idGaleri = Galeri::galleryGenerateID();
+        $img      = $request->foto;
+        $imgext   = $request->foto->extension();
+        $imgname  = time() . '-' . $idGaleri . '.' . $imgext;
 
         $request->merge([
             'images'    => $imgname,
-            'id_galeri' => Galeri::galleryGenerateID(),
+            'id_galeri' => $idGaleri,
         ]);
 
-        // P2: Inisialisasi $query agar tidak undefined jika kondisi tidak terpenuhi
-        $query = false;
-
-        // Jika tidak membuat kategori baru, langsung simpan foto ke galeri
         if (is_null($request->kategori_new)) {
             $validated = $request->validate([
-                'id_galeri'   => 'required|unique:galeri',
-                'id_kategori' => 'nullable',
-                'nama_kategori' => 'nullable',
-                'judul'       => 'required|max:100',
-                'deskripsi'   => 'required|max:300',
+                'id_galeri'   => 'required|unique:galeri,id_galeri',
+                'id_kategori' => 'nullable|exists:kategori,id_kategori',
+                'judul'       => 'required|max:150',
+                'deskripsi'   => 'required|max:500',
                 'images'      => 'required',
             ]);
 
-            $query = Galeri::insert($validated);
+            $query = Galeri::create($validated);
         } else {
-            // Jika kategori baru diisi, tampilkan pesan bahwa fitur belum sepenuhnya diimplementasikan
-            return redirect('/admin-area/galeri')->with('error', 'Mohon pilih kategori yang sudah ada.');
+            return redirect('/admin-area/galeri')->with('error', 'Mohon pilih kategori yang sudah ada atau buat kategori terlebih dahulu.');
         }
 
         $img->move(public_path('/img/gallery'), $imgname);
 
         if ($query) {
             return redirect('/admin-area/galeri')->with('success', 'Berhasil mengunggah foto.');
-        } else {
-            return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam mengunggah foto.');
         }
+
+        return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam mengunggah foto.');
     }
 
     /**
      * Menampilkan form edit foto galeri berdasarkan ID terenkripsi.
      */
-    public function gallery_edit($id) {
-        $gallery = Galeri::vgaleri()->where('id_galeri', decrypt($id))->get();
+    public function gallery_edit($id)
+    {
+        $gallery = Galeri::where('id_galeri', decrypt($id))->firstOrFail();
+        $kategori = Kategori::all();
 
         return view('admin.gallery_edit', [
-            'gallery' => $gallery,
-            'title'   => 'Edit Foto',
-            'menu'    => 'galeri'
+            'gallery'  => [$gallery],
+            'kategori' => $kategori,
+            'title'    => 'Edit Foto',
+            'menu'     => 'galeri',
         ]);
     }
 
     /**
      * Memperbarui data foto galeri yang sudah ada.
-     * P1-Fix: Tambah validasi tipe file gambar jika ada file baru.
+     * #17 Fix: Validasi id_galeri.
      */
-    public function gallery_update(Request $request) {
-        $img = $request->foto;
+    public function gallery_update(Request $request)
+    {
+        $request->validate([
+            'id_galeri' => 'required|exists:galeri,id_galeri',
+        ]);
+
+        $galeri = Galeri::where('id_galeri', $request->id_galeri)->firstOrFail();
+        $img    = $request->foto;
 
         if ($img != null) {
-            // P1: Validasi tipe file gambar
             $request->validate([
-                'foto' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                'foto'        => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                'judul'       => 'required|max:150',
+                'deskripsi'   => 'required|max:500',
+                'id_kategori' => 'nullable|exists:kategori,id_kategori',
             ]);
 
             $imgext  = $request->foto->extension();
-            $imgname = time().'-'.$request->id_galeri.'.'.$imgext;
-
-            $request->merge([
-                'images' => $imgname,
-            ]);
-
-            $validated = $request->validate([
-                'judul'     => 'required|max:100',
-                'deskripsi' => 'required|max:300',
-                'images'    => 'required',
-            ]);
+            $imgname = time() . '-' . $request->id_galeri . '.' . $imgext;
 
             Galeri::deleteImage($request->id_galeri);
-
-            $query = Galeri::where('id_galeri', $request->id_galeri)->update($validated);
-
             $img->move(public_path('/img/gallery'), $imgname);
+
+            $galeri->update([
+                'judul'       => $request->judul,
+                'deskripsi'   => $request->deskripsi,
+                'id_kategori' => $request->id_kategori,
+                'images'      => $imgname,
+            ]);
         } else {
             $validated = $request->validate([
-                'judul'     => 'required|max:100',
-                'deskripsi' => 'required|max:300',
+                'judul'       => 'required|max:150',
+                'deskripsi'   => 'required|max:500',
+                'id_kategori' => 'nullable|exists:kategori,id_kategori',
             ]);
 
-            $query = Galeri::where('id_galeri', $request->id_galeri)->update($validated);
+            $galeri->update($validated);
         }
 
-        if ($query) {
-            return redirect('/admin-area/galeri')->with('success', 'Berhasil mengedit foto.');
-        } else {
-            return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam mengedit foto.');
-        }
+        return redirect('/admin-area/galeri')->with('success', 'Berhasil mengedit foto.');
     }
 
     /**
-     * Menghapus foto galeri berdasarkan ID terenkripsi.
-     * Dengan SoftDeletes aktif, data tidak langsung terhapus permanen.
+     * Menghapus foto galeri berdasarkan ID terenkripsi (Soft Delete).
+     * #11 Fix: File gambar JANGAN dihapus saat soft-delete (hanya saat force delete di trash).
      */
-    public function gallery_delete($id) {
-        Galeri::deleteImage(decrypt($id));
-
+    public function gallery_delete($id)
+    {
         $query = Galeri::destroy(decrypt($id));
 
         if ($query) {
             return redirect('/admin-area/galeri')->with('success', 'Berhasil menghapus foto.');
-        } else {
-            return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam menghapus foto.');
         }
+
+        return redirect('/admin-area/galeri')->with('error', 'Terjadi kesalahan dalam menghapus foto.');
     }
 
     /**
-     * Mencari data galeri berdasarkan judul atau ID galeri.
+     * #12 & #13 Fix: Mencari foto galeri via GET request dengan pagination yang membawa query string.
      */
-    public function gallery_search(Request $request) {
-        $request->merge([
-            'cari' => '%'.$request->cari.'%',
-        ]);
+    public function gallery_search(Request $request)
+    {
+        $keyword = trim((string) $request->input('cari'));
 
-        $validated = $request->validate([
-            'cari' => 'required',
-        ]);
-
-        $query = Galeri::vgaleri()->where('judul', 'like', $validated)->orWhere('id_galeri', 'like', $validated)->paginate(8);
-
-        if ($query->isNotEmpty()) {
-            return view('admin.gallery', [
-                'title'   => 'Hasil Pencarian : '.$request->cari,
-                'menu'    => 'galeri',
-                'gallery' => $query,
-            ]);
-        } else {
-            return redirect()->back()->with('message', 'Data galeri tidak ditemukan.');
+        if ($keyword === '') {
+            return redirect('/admin-area/galeri');
         }
+
+        $query = Galeri::where(function ($q) use ($keyword) {
+            $q->where('judul', 'like', "%{$keyword}%")
+              ->orWhere('id_galeri', 'like', "%{$keyword}%")
+              ->orWhere('deskripsi', 'like', "%{$keyword}%");
+        })->paginate(8)->withQueryString();
+
+        return view('admin.gallery', [
+            'title'   => 'Hasil Pencarian: ' . $keyword,
+            'menu'    => 'galeri',
+            'gallery' => $query,
+            'cari'    => $keyword,
+        ]);
     }
 
     /**
-     * Menampilkan detail kategori galeri.
+     * Menampilkan detail kategori galeri beserta daftar fotonya.
      */
-    public function kategori_details($id) {
-        $kategori = Galeri::kategori()->where('id_kategori', decrypt($id))->get();
-        $gallery  = Galeri::where('id_kategori', decrypt($id))->get();
+    public function kategori_details($id)
+    {
+        $realId   = decrypt($id);
+        $kategori = Kategori::where('id_kategori', $realId)->get();
+        $gallery  = Galeri::where('id_kategori', $realId)->get();
 
         return view('admin.gallery_category_details', [
             'kategori' => $kategori,
@@ -176,30 +172,34 @@ class GaleriController extends Controller
     /**
      * Menyimpan kategori galeri baru.
      */
-    public function kategori_submit(Request $request) {
+    public function kategori_submit(Request $request)
+    {
+        $idKategori = Kategori::generateID();
+
         $request->merge([
-            'id_kategori' => Galeri::categoryGenerateID(),
+            'id_kategori' => $idKategori,
         ]);
 
         $validated = $request->validate([
-            'id_kategori'   => 'required|unique:kategori',
-            'nama_kategori' => 'required|max:50',
+            'id_kategori'   => 'required|unique:kategori,id_kategori',
+            'nama_kategori' => 'required|max:100',
         ]);
 
-        $query = Galeri::kategori()->insert($validated);
+        $query = Kategori::create($validated);
 
         if ($query) {
             return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil menambahkan kategori.');
-        } else {
-            return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam menambahkan kategori.');
         }
+
+        return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam menambahkan kategori.');
     }
 
     /**
      * Menampilkan form edit kategori berdasarkan ID terenkripsi.
      */
-    public function kategori_edit($id) {
-        $kategori = Galeri::kategori()->where('id_kategori', decrypt($id))->get();
+    public function kategori_edit($id)
+    {
+        $kategori = Kategori::where('id_kategori', decrypt($id))->get();
 
         return view('admin.gallery_category_edit', [
             'kategori' => $kategori,
@@ -211,55 +211,63 @@ class GaleriController extends Controller
     /**
      * Memperbarui data kategori galeri.
      */
-    public function kategori_update(Request $request) {
+    public function kategori_update(Request $request)
+    {
         $validated = $request->validate([
-            'nama_kategori' => 'required|max:50',
+            'id_kategori'   => 'required|exists:kategori,id_kategori',
+            'nama_kategori' => 'required|max:100',
         ]);
 
-        $query = Galeri::kategori()->where('id_kategori', $request->id_kategori)->update($validated);
+        Kategori::where('id_kategori', $request->id_kategori)->update([
+            'nama_kategori' => $validated['nama_kategori'],
+        ]);
 
-        if ($query) {
-            return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil mengedit kategori.');
-        } else {
-            return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam mengedit kategori.');
-        }
+        return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil mengedit kategori.');
     }
 
     /**
-     * Menghapus kategori galeri berdasarkan ID terenkripsi.
+     * Menghapus kategori galeri.
+     * #22 Fix: Cegah penghapusan jika kategori masih digunakan oleh foto di tabel galeri.
      */
-    public function kategori_delete($id) {
-        $query = Galeri::kategori()->where('id_kategori', decrypt($id))->delete();
+    public function kategori_delete($id)
+    {
+        $realId = decrypt($id);
+
+        if (Galeri::where('id_kategori', $realId)->exists()) {
+            return redirect('/admin-area/kategori-galeri')
+                ->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh beberapa foto galeri.');
+        }
+
+        $query = Kategori::where('id_kategori', $realId)->delete();
 
         if ($query) {
             return redirect('/admin-area/kategori-galeri')->with('success', 'Berhasil menghapus kategori.');
-        } else {
-            return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam menghapus kategori.');
         }
+
+        return redirect('/admin-area/kategori-galeri')->with('error', 'Terjadi kesalahan dalam menghapus kategori.');
     }
 
     /**
-     * Mencari data kategori galeri.
+     * #12 & #13 Fix: Mencari data kategori via GET request dengan pagination yang membawa query string.
      */
-    public function kategori_search(Request $request) {
-        $request->merge([
-            'cari' => '%'.$request->cari.'%',
-        ]);
+    public function kategori_search(Request $request)
+    {
+        $keyword = trim((string) $request->input('cari'));
 
-        $validated = $request->validate([
-            'cari' => 'required',
-        ]);
-
-        $query = Galeri::kategori()->where('nama_kategori', 'like', $validated)->orWhere('id_kategori', 'like', $validated)->paginate(20);
-
-        if ($query->isNotEmpty()) {
-            return view('admin.gallery_category', [
-                'title'    => 'Hasil Pencarian : '.$request->cari,
-                'menu'     => 'kategori',
-                'category' => $query,
-            ]);
-        } else {
-            return redirect()->back()->with('message', 'Data kategori tidak ditemukan.');
+        if ($keyword === '') {
+            return redirect('/admin-area/kategori-galeri');
         }
+
+        $query = Kategori::where(function ($q) use ($keyword) {
+            $q->where('nama_kategori', 'like', "%{$keyword}%")
+              ->orWhere('id_kategori', 'like', "%{$keyword}%");
+        })->paginate(20)->withQueryString();
+
+        return view('admin.gallery_category', [
+            'title'    => 'Hasil Pencarian: ' . $keyword,
+            'menu'     => 'kategori',
+            'category' => $query,
+            'cari'     => $keyword,
+        ]);
     }
 }

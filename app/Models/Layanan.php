@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use App\Support\IdGenerator;
 
 /**
  * R3: Model Layanan untuk mengelola layanan/perawatan gigi klinik.
  */
 class Layanan extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\ClearsHomeCache;
 
     protected $table      = 'layanans';
     protected $primaryKey = 'id_layanan';
@@ -41,18 +41,7 @@ class Layanan extends Model
      */
     public static function generateID(): string
     {
-        return DB::transaction(function () {
-            $lastId = Layanan::lockForUpdate()->max('id_layanan');
-
-            if ($lastId) {
-                preg_match('/\d+$/', $lastId, $matches);
-                $num = isset($matches[0]) ? (int) $matches[0] : 0;
-            } else {
-                $num = 0;
-            }
-
-            return 'LYN-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
-        });
+        return IdGenerator::next('LYN-', Layanan::query(), 'id_layanan');
     }
 
     /**

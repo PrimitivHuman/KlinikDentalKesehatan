@@ -13,13 +13,6 @@
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <ul class="navbar-nav flex-row align-items-center ms-auto gap-2">
-            <!-- View Website Button -->
-            <li class="nav-item d-none d-sm-block">
-                <a href="/" target="_blank" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1" style="border-radius: var(--admin-radius-pill);">
-                    <i class="bx bx-globe"></i>
-                    <span>Web Publik</span>
-                </a>
-            </li>
 
             <!-- User Dropdown -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -61,10 +54,13 @@
                         <div class="dropdown-divider m-0"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item py-2 text-danger" href="/logout">
-                            <i class="bx bx-power-off me-2"></i>
-                            <span class="align-middle">Keluar (Logout)</span>
-                        </a>
+                        <form action="/logout" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="dropdown-item py-2 text-danger border-0 bg-transparent w-100 text-start">
+                                <i class="bx bx-power-off me-2"></i>
+                                <span class="align-middle">Keluar (Logout)</span>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </li>

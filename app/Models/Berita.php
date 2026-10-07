@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
+use App\Support\IdGenerator;
 use Illuminate\Support\Str;
 
 /**
@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
  */
 class Berita extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \App\Models\Concerns\ClearsHomeCache;
 
     protected $table      = 'beritas';
     protected $primaryKey = 'id_berita';
@@ -43,18 +43,7 @@ class Berita extends Model
      */
     public static function generateID(): string
     {
-        return DB::transaction(function () {
-            $lastId = Berita::withTrashed()->lockForUpdate()->max('id_berita');
-
-            if ($lastId) {
-                preg_match('/\d+$/', $lastId, $matches);
-                $num = isset($matches[0]) ? (int) $matches[0] : 0;
-            } else {
-                $num = 0;
-            }
-
-            return 'BRT-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
-        });
+        return IdGenerator::next('BRT-', Berita::withTrashed(), 'id_berita');
     }
 
     /**
@@ -65,9 +54,15 @@ class Berita extends Model
      */
     public static function generateSlug(string $judul): string
     {
-        $slug = Str::slug($judul, '-');
-        $count = Berita::where('slug', 'like', "{$slug}%")->count();
-        return $count ? "{$slug}-{$count}" : $slug;
+        $base = Str::slug($judul, '-') ?: 'artikel';
+        $slug = $base;
+        $i    = 1;
+
+        while (Berita::withTrashed()->where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $i++;
+        }
+
+        return $slug;
     }
 
     /**

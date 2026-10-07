@@ -28,6 +28,14 @@ class Pasien extends Model
         'template',
         'status',
         'dokter_pilihan',
+        'id_dokter',
+    ];
+
+    /**
+     * total_harga_pasien disimpan sebagai angka rupiah (bukan teks).
+     */
+    protected $casts = [
+        'total_harga_pasien' => 'integer',
     ];
 
     /**
@@ -53,12 +61,21 @@ class Pasien extends Model
     }
 
     /**
-     * K6 Fix: Relasi pasien ke dokter melalui nama dokter yang dipilih.
-     * Menggunakan hasOne dengan foreign key nama agar bisa eager-load data dokter.
+     * Relasi pasien ke dokter melalui id_dokter (dengan fallback nama dokter jika legacy).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function dokter()
+    {
+        return $this->belongsTo(Dokter::class, 'id_dokter', 'id_dokter');
+    }
+
+    /**
+     * Relasi fallback legacy lewat nama dokter jika id_dokter belum terisi.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function dokter()
+    public function dokterLegacy()
     {
         return $this->hasOne(Dokter::class, 'nama_dokter', 'dokter_pilihan');
     }

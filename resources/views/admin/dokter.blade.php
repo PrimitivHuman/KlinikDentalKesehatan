@@ -2,23 +2,15 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- Header & Breadcrumbs -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-        <div>
-            <h4 class="fw-bold mb-1 text-dark">Data Tim Dokter</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="/admin-area" class="text-muted">Beranda</a></li>
-                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">Dokter</li>
-                </ol>
-            </nav>
-        </div>
-        <div class="d-flex gap-2 align-items-center w-100 w-md-auto justify-content-end">
-            <a href="/admin-area/dokter/new" class="btn btn-primary d-inline-flex align-items-center gap-1 shadow-sm">
-                <i class="bx bx-plus fs-5"></i>
-                <span>Tambah Dokter</span>
-            </a>
-        </div>
+    <!-- Header & Breadcrumbs (Konsisten dengan halaman admin lainnya) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center py-3 mb-4 gap-3">
+        <h4 class="fw-bold mb-0">
+            <span class="text-muted fw-light"><a href="/admin-area" class="a-breadcrumbs">Beranda</a> /</span> Data Dokter
+        </h4>
+        <a href="/admin-area/dokter/new" class="btn btn-primary d-inline-flex align-items-center gap-1 shadow-sm">
+            <i class="bx bx-plus fs-5"></i>
+            <span>Tambah Dokter</span>
+        </a>
     </div>
 
     @include('admin.layout.alert')
@@ -26,8 +18,7 @@
     <!-- Search & Filter Card -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-3">
-            <form action="/admin-area/dokter" method="POST" class="row g-2 align-items-center">
-                @csrf
+            <form action="/admin-area/dokter" method="GET" class="row g-2 align-items-center">
                 <div class="col-12 col-md-5 col-lg-4">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted">
@@ -136,12 +127,13 @@
                                class="btn btn-sm btn-outline-primary flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1">
                                 <i class="bx bx-edit-alt"></i> Edit
                             </a>
-                            <a href="/admin-area/dokter/delete/{{ Crypt::encrypt($data->id_dokter) }}" 
-                               onclick="return confirm('Apakah Anda yakin ingin menghapus data {{ addslashes($data->nama_dokter) }}?')" 
-                               class="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center"
-                               title="Hapus Dokter">
-                                <i class="bx bx-trash"></i>
-                            </a>
+                            <form action="/admin-area/dokter/delete/{{ Crypt::encrypt($data->id_dokter) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ addslashes($data->nama_dokter) }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center" title="Hapus Dokter">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>

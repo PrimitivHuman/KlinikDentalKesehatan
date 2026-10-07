@@ -80,16 +80,16 @@
                     <strong>Email:</strong> {{ $pasien->email_pasien }}
                 </div>
                 <div class="details-item">
-                    <strong>No. Telepon:</strong> {{ $pasien->telp_pasien }}
+                    <strong>No. Telepon:</strong> {{ $pasien->no_hp_pasien }}
                 </div>
                 <div class="details-item">
-                    <strong>Tanggal Lahir:</strong> {{ \Carbon\Carbon::parse($pasien->tgl_lahir)->format('d M Y') }}
+                    <strong>Jadwal Janji Temu:</strong> {{ \Carbon\Carbon::parse($pasien->tanggal_janji)->format('d M Y, H:i') }} WIB
                 </div>
                 <div class="details-item">
-                    <strong>Tanggal Reservasi:</strong> {{ \Carbon\Carbon::parse($pasien->tgl_pasien)->format('d M Y') }}
+                    <strong>Dokter:</strong> {{ $pasien->dokter_pilihan ?: 'Ditentukan oleh klinik' }}
                 </div>
                 <div class="details-item">
-                    <strong>Tujuan Perawatan:</strong> {{ $pasien->tujuan_pasien ?? '-' }}
+                    <strong>Keluhan:</strong> {{ $pasien->keluhan_pasien ?? '-' }}
                 </div>
             </div>
 

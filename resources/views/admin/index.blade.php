@@ -18,14 +18,6 @@
                             Berikut adalah ringkasan performa dan aktivitas operasional Klinik FAM Dental Care hari ini.
                         </p>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="/admin-area/pasien" class="btn btn-primary d-inline-flex align-items-center gap-2">
-                            <i class="bx bx-user-plus"></i> Kelola Pasien
-                        </a>
-                        <a href="/" target="_blank" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
-                            <i class="bx bx-external-link"></i> Web Publik
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -86,6 +78,147 @@
         </div>
     </div>
 
+    <!-- 4 Key Operational Metrics (#6, #33) -->
+    <div class="row g-3 mb-4">
+        <!-- Janji Hari Ini -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card-pro" style="border-left: 3px solid #0D9488;">
+                <div class="stat-card-icon teal">
+                    <i class="bx bx-calendar-event"></i>
+                </div>
+                <div>
+                    <div class="stat-card-val text-teal">{{ $count_hari_ini ?? 0 }}</div>
+                    <div class="stat-card-lbl">Janji Temu Hari Ini</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menunggu Konfirmasi -->
+        <div class="col-6 col-lg-3">
+            <a href="/admin-area/pasien/search?status=pending" class="text-decoration-none">
+                <div class="stat-card-pro" style="border-left: 3px solid #F59E0B;">
+                    <div class="stat-card-icon amber">
+                        <i class="bx bx-time-five"></i>
+                    </div>
+                    <div>
+                        <div class="stat-card-val text-warning">{{ $count_pending ?? 0 }}</div>
+                        <div class="stat-card-lbl">Menunggu Konfirmasi</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Pendapatan Bulan Ini -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card-pro" style="border-left: 3px solid #10B981;">
+                <div class="stat-card-icon emerald">
+                    <i class="bx bx-wallet"></i>
+                </div>
+                <div>
+                    <div class="stat-card-val text-success fs-5">Rp {{ number_format($pendapatan_bulan_ini ?? 0, 0, ',', '.') }}</div>
+                    <div class="stat-card-lbl">Pendapatan Bulan Ini</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Pendapatan Selesai -->
+        <div class="col-6 col-lg-3">
+            <div class="stat-card-pro" style="border-left: 3px solid #0284C7;">
+                <div class="stat-card-icon blue">
+                    <i class="bx bx-line-chart"></i>
+                </div>
+                <div>
+                    <div class="stat-card-val text-primary fs-5">Rp {{ number_format($pendapatan_total ?? 0, 0, ',', '.') }}</div>
+                    <div class="stat-card-lbl">Total Penerimaan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Janji Temu Hari Ini Section (#33) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header d-flex align-items-center justify-content-between bg-white py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-label-primary p-2">
+                            <i class="bx bx-calendar-star fs-5"></i>
+                        </span>
+                        <div>
+                            <h6 class="card-title mb-0 fw-bold text-dark">Janji Temu Hari Ini ({{ \Carbon\Carbon::now()->translatedFormat('d F Y') }})</h6>
+                            <small class="text-muted">Daftar pasien yang memiliki jadwal kunjungan pada hari ini</small>
+                        </div>
+                    </div>
+                    <a href="/admin-area/pasien" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                        <span>Lihat Semua Pasien</span> <i class="bx bx-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    @if(isset($pasien_hari_ini) && count($pasien_hari_ini) > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr class="small text-muted">
+                                        <th class="ps-4">Waktu</th>
+                                        <th>Nama Pasien</th>
+                                        <th>Dokter Pilihan</th>
+                                        <th>Keluhan</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pasien_hari_ini as $phi)
+                                        <tr>
+                                            <td class="ps-4 fw-bold text-dark">
+                                                <i class="bx bx-time text-primary me-1"></i>
+                                                {{ $phi->tanggal_janji ? \Carbon\Carbon::parse($phi->tanggal_janji)->format('H:i') . ' WIB' : '-' }}
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold text-dark">{{ $phi->nama_pasien }}</div>
+                                                <small class="text-muted">{{ $phi->no_hp_pasien }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark border">
+                                                    <i class="bx bx-user-pin text-primary me-1"></i>
+                                                    {{ $phi->dokter_pilihan ?? ($phi->dokter->nama_dokter ?? 'Belum ditentukan') }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="small text-muted">{{ Str::limit($phi->keluhan_pasien, 30) }}</span>
+                                            </td>
+                                            <td>
+                                                @php
+                                                    $bClass = match($phi->status) {
+                                                        'confirmed' => 'bg-info',
+                                                        'completed' => 'bg-success',
+                                                        'cancelled' => 'bg-danger',
+                                                        default     => 'bg-warning text-dark'
+                                                    };
+                                                @endphp
+                                                <span class="badge {{ $bClass }} px-2 py-1">{{ ucfirst($phi->status) }}</span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <a href="/admin-area/pasien/edit/{{ Crypt::encrypt($phi->id_pasien) }}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                                                    <i class="bx bx-edit-alt"></i> Tindakan / Rekam
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4 text-muted">
+                            <i class="bx bx-calendar-check fs-1 text-muted opacity-50 mb-2"></i>
+                            <p class="mb-0 small">Belum ada jadwal kunjungan pasien untuk hari ini.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Middle Row: Chart & Status Breakdown -->
     <div class="row g-4 mb-4">
         
@@ -108,10 +241,10 @@
         </div>
 
         <!-- Status Pasien & Master Summary -->
-        <div class="col-12 col-lg-4 d-flex flex-column gap-4">
+        <div class="col-12 col-lg-4">
             
             <!-- Distribusi Status Pasien -->
-            <div class="card flex-grow-1">
+            <div class="card h-100">
                 <div class="card-header pb-3">
                     <h5 class="card-title mb-0">Status Reservasi Pasien</h5>
                     <small class="text-muted">Ringkasan status antrean saat ini</small>
@@ -138,41 +271,6 @@
                             <span class="fw-bold fs-6 text-dark">{{ ($status_stats[$key]->total ?? 0) }}</span>
                         </div>
                         @endforeach
-                    </div>
-                </div>
-            </div>
-
-            <!-- Master Data Summary Card -->
-            <div class="card">
-                <div class="card-header pb-2">
-                    <h6 class="card-title mb-0 fs-6">Kelola Konten & Data</h6>
-                </div>
-                <div class="card-body pt-2">
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <a href="/admin-area/kegiatan" class="p-2 border rounded-3 d-flex flex-column text-decoration-none text-dark h-100" style="background-color: var(--admin-bg);">
-                                <small class="text-muted" style="font-size: 11px;">Kegiatan</small>
-                                <strong class="fs-6 text-primary">{{ $kegiatan_count ?? 0 }} Agenda</strong>
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a href="/admin-area/galeri" class="p-2 border rounded-3 d-flex flex-column text-decoration-none text-dark h-100" style="background-color: var(--admin-bg);">
-                                <small class="text-muted" style="font-size: 11px;">Galeri</small>
-                                <strong class="fs-6 text-warning">{{ $galeri_count ?? 0 }} Foto</strong>
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a href="/admin-area/informasi-umum" class="p-2 border rounded-3 d-flex flex-column text-decoration-none text-dark h-100" style="background-color: var(--admin-bg);">
-                                <small class="text-muted" style="font-size: 11px;">Tentang</small>
-                                <strong class="fs-6 text-info">Profil Klinik</strong>
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a href="/admin-area/trash" class="p-2 border rounded-3 d-flex flex-column text-decoration-none text-dark h-100" style="background-color: var(--admin-bg);">
-                                <small class="text-muted" style="font-size: 11px;">Recycle Bin</small>
-                                <strong class="fs-6 text-danger">Data Terhapus</strong>
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>

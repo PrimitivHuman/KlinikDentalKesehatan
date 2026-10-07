@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\Pasien;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -12,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * R1: Mailable untuk notifikasi ke admin saat ada pendaftaran janji temu baru.
  */
-class AppointmentAdminNotification extends Mailable
+class AppointmentAdminNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

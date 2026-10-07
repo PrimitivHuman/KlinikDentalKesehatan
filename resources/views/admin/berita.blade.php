@@ -50,20 +50,23 @@
                         </td>
                         <td>{{ $b->tgl_terbit ? $b->tgl_terbit->format('d M Y') : '-' }}</td>
                         <td>
-                            <a href="/admin-area/berita/toggle/{{ Crypt::encrypt($b->id_berita) }}"
-                               class="btn btn-sm btn-outline-{{ $b->status === 'published' ? 'secondary' : 'success' }} me-1"
-                               title="{{ $b->status === 'published' ? 'Jadikan Draft' : 'Publish' }}">
-                                <i class="bx bx-{{ $b->status === 'published' ? 'hide' : 'show' }}"></i>
-                            </a>
+                            <form action="/admin-area/berita/toggle/{{ Crypt::encrypt($b->id_berita) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-{{ $b->status === 'published' ? 'secondary' : 'success' }} me-1" title="{{ $b->status === 'published' ? 'Jadikan Draft' : 'Publish' }}">
+                                    <i class="bx bx-{{ $b->status === 'published' ? 'hide' : 'show' }}"></i>
+                                </button>
+                            </form>
                             <a href="/admin-area/berita/edit/{{ Crypt::encrypt($b->id_berita) }}"
-                               class="btn btn-sm btn-outline-primary me-1">
+                               class="btn btn-sm btn-outline-primary me-1" title="Edit">
                                 <i class="bx bx-edit-alt"></i>
                             </a>
-                            <a href="/admin-area/berita/delete/{{ Crypt::encrypt($b->id_berita) }}"
-                               onclick="return confirm('Hapus artikel \'{{ $b->judul }}\'?')"
-                               class="btn btn-sm btn-outline-danger">
-                                <i class="bx bx-trash"></i>
-                            </a>
+                            <form action="/admin-area/berita/delete/{{ Crypt::encrypt($b->id_berita) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus artikel \'{{ addslashes($b->judul) }}\'?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @empty

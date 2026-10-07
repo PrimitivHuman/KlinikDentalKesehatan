@@ -145,15 +145,15 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label class="form-label">Masukkan sandi lama</label>
-                                <input type="password" class="form-control" name="old_password">
+                                <input type="password" class="form-control" name="old_password" placeholder="Masukkan kata sandi lama">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Masukkan sandi baru</label>
-                                <input type="password" class="form-control" name="password">
+                                <input type="password" class="form-control" name="password" placeholder="Minimal 8 karakter">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Masukkan sandi baru</label>
-                                <input type="password" class="form-control" name="retype_password">
+                                <label class="form-label">Konfirmasi sandi baru</label>
+                                <input type="password" class="form-control" name="retype_password" placeholder="Ketik ulang kata sandi baru">
                             </div>
                         </div>
                     </div>

@@ -96,7 +96,7 @@
 </section><!-- End Hero -->
 
 <!-- ======= Nilai Unggulan (Why Choose Us) ======= -->
-<section class="py-5" style="background: #FFFFFF; border-bottom: 1px solid var(--uipro-border);">
+<section class="pt-3 pb-5" style="background: #FFFFFF; border-bottom: 1px solid var(--uipro-border);">
   <div class="container" data-aos="fade-up">
     <div class="row g-4">
       <div class="col-md-4">
@@ -264,7 +264,7 @@
       <div class="col-lg-6" data-aos="fade-left">
         <div class="content">
           <div class="mb-4 text-secondary leading-relaxed" style="font-size: 15px;">
-            {!! html_entity_decode($tentang?->informasi_umum ?? 'Family Dental Care didirikan untuk memberikan solusi kesehatan gigi terpercaya bagi keluarga dengan suasana yang ramah dan nyaman.') !!}
+            {!! \App\Support\Sanitizer::html($tentang?->informasi_umum ?? 'Family Dental Care didirikan untuk memberikan solusi kesehatan gigi terpercaya bagi keluarga dengan suasana yang ramah dan nyaman.') !!}
           </div>
 
           <div class="p-3 rounded-3 mb-3 bg-white border" style="border-color: var(--uipro-border) !important;">
@@ -272,7 +272,7 @@
               <i class="bi bi-bullseye text-primary"></i> Visi Kami
             </h5>
             <div class="text-muted small fst-italic">
-              {!! html_entity_decode($tentang?->visi ?? 'Menjadi pusat layanan kesehatan gigi keluarga yang nyaman, ramah, dan profesional.') !!}
+              {!! \App\Support\Sanitizer::html($tentang?->visi ?? 'Menjadi pusat layanan kesehatan gigi keluarga yang nyaman, ramah, dan profesional.') !!}
             </div>
           </div>
 
@@ -281,7 +281,7 @@
               <i class="bi bi-check2-circle text-success"></i> Misi Kami
             </h5>
             <div class="text-muted small">
-              {!! html_entity_decode($tentang?->misi ?? 'Memberikan pelayanan kesehatan gigi yang berkualitas dan profesional untuk seluruh keluarga.') !!}
+              {!! \App\Support\Sanitizer::html($tentang?->misi ?? 'Memberikan pelayanan kesehatan gigi yang berkualitas dan profesional untuk seluruh keluarga.') !!}
             </div>
           </div>
         </div>
@@ -307,7 +307,7 @@
           <a href="{{ asset('/img/gallery/'.$data->images) }}" class="gallery-lightbox">
             <img src="{{ asset('/img/gallery/'.$data->images) }}" alt="{{ strip_tags($data->judul) }}">
           </a>
-          <h5 class="gallery-title">{!! html_entity_decode($data->judul) !!}</h5>
+          <h5 class="gallery-title">{{ strip_tags($data->judul) }}</h5>
         </div>
       </div>
       @endforeach
@@ -315,6 +315,117 @@
 
   </div>
 </section><!-- End Gallery Section -->
+
+@if (isset($beritas) && $beritas->isNotEmpty())
+<!-- ======= Berita & Edukasi Section ======= -->
+<section id="berita" class="py-5" style="background: #f8fafc;">
+  <div class="container" data-aos="fade-up">
+    <div class="section-title">
+      <h2>Artikel &amp; Tips Gigi Terkini</h2>
+      <p>Informasi kesehatan dan panduan perawatan gigi langsung dari tim medis profesional kami.</p>
+    </div>
+
+    <div class="row g-4">
+      @foreach ($beritas as $item)
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+          @if ($item->images)
+            <img src="{{ asset('/img/berita/' . $item->images) }}" class="card-img-top" alt="{{ $item->judul }}" style="height: 200px; object-fit: cover;">
+          @else
+            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
+              <i class="bi bi-newspaper" style="font-size: 2.5rem;"></i>
+            </div>
+          @endif
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="text-muted small mb-2 d-flex align-items-center gap-2">
+              <i class="bi bi-calendar3"></i>
+              <span>{{ $item->tgl_terbit ? \Carbon\Carbon::parse($item->tgl_terbit)->translatedFormat('d M Y') : '' }}</span>
+              <span>•</span>
+              <i class="bi bi-person"></i>
+              <span>{{ $item->penulis ?? 'Tim Dokter' }}</span>
+            </div>
+            <h5 class="card-title fw-bold fs-6 mb-2">
+              <a href="/berita/{{ $item->slug }}" class="text-decoration-none text-dark">
+                {{ $item->judul }}
+              </a>
+            </h5>
+            <p class="card-text text-secondary small flex-grow-1">
+              {{ Str::limit(strip_tags($item->isi), 100) }}
+            </p>
+            <div class="mt-3 pt-2">
+              <a href="/berita/{{ $item->slug }}" class="text-primary fw-semibold small text-decoration-none">
+                Baca Selengkapnya <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      @endforeach
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/berita" class="btn btn-outline-primary rounded-pill px-4">
+        Lihat Semua Artikel <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+@endif
+
+@if (isset($kegiatans) && $kegiatans->isNotEmpty())
+<!-- ======= Agenda Kegiatan Section ======= -->
+<section id="agenda" class="py-5" style="background: #ffffff; border-top: 1px solid var(--uipro-border);">
+  <div class="container" data-aos="fade-up">
+    <div class="section-title">
+      <h2>Agenda &amp; Kegiatan Klinik</h2>
+      <p>Aktivitas sosial, penyuluhan kesehatan gigi, dan agenda pelayanan terkini FAM Dental Care.</p>
+    </div>
+
+    <div class="row g-4">
+      @foreach ($kegiatans as $keg)
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+          @if ($keg->images)
+            <img src="{{ asset('/img/activity/' . $keg->images) }}" class="card-img-top" alt="{{ $keg->judul_kegiatan }}" style="height: 200px; object-fit: cover;">
+          @else
+            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
+              <i class="bi bi-calendar-event" style="font-size: 2.5rem;"></i>
+            </div>
+          @endif
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="mb-2">
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 small">
+                <i class="bi bi-calendar-check me-1"></i>
+                {{ $keg->tgl_kegiatan ? \Carbon\Carbon::parse($keg->tgl_kegiatan)->translatedFormat('d M Y') : '' }}
+              </span>
+            </div>
+            <h5 class="card-title fw-bold fs-6 mb-2">
+              <a href="/agenda/{{ $keg->id_kegiatan }}" class="text-decoration-none text-dark">
+                {{ $keg->judul_kegiatan }}
+              </a>
+            </h5>
+            <div class="card-text text-secondary small flex-grow-1">
+              {{ Str::limit(strip_tags($keg->deskripsi_kegiatan), 110) }}
+            </div>
+            <div class="mt-3 pt-2">
+              <a href="/agenda/{{ $keg->id_kegiatan }}" class="text-primary fw-semibold small text-decoration-none">
+                Detail Kegiatan <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      @endforeach
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/agenda" class="btn btn-outline-primary rounded-pill px-4">
+        Lihat Semua Agenda <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+@endif
 
 <!-- ======= Contact & Location Section ======= -->
 <section id="contact" class="contact py-5">

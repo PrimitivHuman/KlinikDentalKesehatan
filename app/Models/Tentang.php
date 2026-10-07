@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tentang extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\ClearsHomeCache;
 
     protected $table = 'tentang';
     protected $primaryKey = 'id_tentang';

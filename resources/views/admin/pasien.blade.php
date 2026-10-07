@@ -17,27 +17,45 @@
                     </a>
                 </div>
 
-                <!-- Search Form Right: Jarak terpisah antara input/placeholder dengan tombol Cari -->
-                <form action="/admin-area/pasien" method="POST" class="d-flex align-items-center gap-2 m-0">
-                    @csrf
-                    <div class="position-relative" style="min-width: 250px;">
-                        <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted" style="pointer-events: none;">
-                            <i class="bx bx-search fs-5"></i>
+                <!-- Pencarian + Filter (status, dokter, rentang tanggal) -->
+                <form action="/admin-area/pasien" method="GET" class="d-flex flex-wrap align-items-center gap-2 m-0">
+                    <div class="input-group-search" style="min-width: 230px; height: 38px;">
+                        <span class="search-icon">
+                            <i class="bx bx-search"></i>
                         </span>
-                        <input required type="text" id="cari" name="cari" 
-                               class="form-control ps-5 pe-3" 
-                               style="border-radius: 8px; font-size: 13px;"
-                               placeholder="Cari nama, ID, no HP..." 
-                               value="{{ request('cari') }}">
+                        <input type="text" id="cari" name="cari"
+                               class="form-control"
+                               placeholder="Cari nama, ID, no HP..."
+                               value="{{ request('cari') }}"
+                               autocomplete="off">
                     </div>
-                    <button class="btn btn-outline-primary btn-sm px-3 d-inline-flex align-items-center gap-1" 
-                            type="submit" 
+                    <select name="status" class="form-select form-select-sm" style="width: 150px; border-radius: 8px; height: 38px;" aria-label="Filter status">
+                        <option value="">Semua Status</option>
+                        @foreach (['pending' => 'Pending', 'confirmed' => 'Dikonfirmasi', 'completed' => 'Selesai', 'cancelled' => 'Dibatalkan'] as $val => $lbl)
+                            <option value="{{ $val }}" {{ request('status') === $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                        @endforeach
+                    </select>
+                    <select name="dokter" class="form-select form-select-sm" style="width: 170px; border-radius: 8px; height: 38px;" aria-label="Filter dokter">
+                        <option value="">Semua Dokter</option>
+                        @foreach (($dokters ?? []) as $d)
+                            <option value="{{ $d->id_dokter }}" {{ request('dokter') === $d->id_dokter ? 'selected' : '' }}>{{ $d->nama_dokter }}</option>
+                        @endforeach
+                    </select>
+                    <!-- Filter Rentang Tanggal (Dari s/d Sampai) -->
+                    <div class="input-group input-group-sm" style="width: auto;">
+                        <span class="input-group-text bg-light text-muted px-2" style="font-size: 12px; font-weight: 600; border-radius: 8px 0 0 8px;">Dari</span>
+                        <input type="date" name="dari" value="{{ request('dari') }}" class="form-control form-control-sm" style="width: 135px; height: 38px; font-size: 12px;" title="Dari tanggal" aria-label="Dari tanggal">
+                        <span class="input-group-text bg-light text-muted px-2" style="font-size: 12px; font-weight: 600;">s/d</span>
+                        <input type="date" name="sampai" value="{{ request('sampai') }}" class="form-control form-control-sm" style="width: 135px; height: 38px; font-size: 12px; border-radius: 0 8px 8px 0;" title="Sampai tanggal" aria-label="Sampai tanggal">
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm px-3 d-inline-flex align-items-center gap-1"
+                            type="submit"
                             style="border-radius: 8px; height: 38px;">
-                        <i class="bx bx-search"></i>
-                        <span>Cari</span>
+                        <i class="bx bx-filter-alt"></i>
+                        <span>Terapkan</span>
                     </button>
-                    @if(request('cari') || Session::has('message'))
-                        <a href="/admin-area/pasien" class="btn btn-outline-secondary btn-sm px-2 d-inline-flex align-items-center" style="border-radius: 8px; height: 38px;" title="Reset Pencarian">
+                    @if(request()->hasAny(['cari', 'status', 'dokter', 'dari', 'sampai']) || Session::has('message'))
+                        <a href="/admin-area/pasien" class="btn btn-outline-secondary btn-sm px-2 d-inline-flex align-items-center" style="border-radius: 8px; height: 38px;" title="Reset">
                             <i class="bx bx-x fs-5"></i>
                         </a>
                     @endif
@@ -113,44 +131,50 @@
                                     @elseif($data->status === 'cancelled') btn-danger
                                     @else btn-warning text-dark @endif" 
                                     data-bs-toggle="dropdown" 
-                                    data-bs-boundary="viewport"
-                                    data-bs-popper-config='{"strategy":"fixed"}'
                                     aria-expanded="false">
                                     <span>{{ ucfirst($data->status ?? 'pending') }}</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="border-radius: 12px; min-width: 175px; z-index: 1060;">
                                     <li class="px-3 py-1 text-muted small fw-semibold text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Ubah Status:</li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'pending' ? 'active bg-light text-dark fw-bold' : '' }}" 
-                                           href="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/pending">
-                                            <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 10px;">Pending</span>
-                                            <span class="small">Menunggu</span>
-                                            @if($data->status === 'pending')<i class="bx bx-check ms-auto text-primary"></i>@endif
-                                        </a>
+                                        <form action="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/pending" method="POST" class="m-0 p-0">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'pending' ? 'active bg-light text-dark fw-bold' : '' }}" style="border:none; background:transparent; width:100%; text-align:left;">
+                                                <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 10px;">Pending</span>
+                                                <span class="small">Menunggu</span>
+                                                @if($data->status === 'pending')<i class="bx bx-check ms-auto text-primary"></i>@endif
+                                            </button>
+                                        </form>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'confirmed' ? 'active bg-light text-dark fw-bold' : '' }}" 
-                                           href="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/confirmed">
-                                            <span class="badge bg-info px-2 py-1" style="font-size: 10px;">Confirmed</span>
-                                            <span class="small">Konfirmasi</span>
-                                            @if($data->status === 'confirmed')<i class="bx bx-check ms-auto text-primary"></i>@endif
-                                        </a>
+                                        <form action="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/confirmed" method="POST" class="m-0 p-0">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'confirmed' ? 'active bg-light text-dark fw-bold' : '' }}" style="border:none; background:transparent; width:100%; text-align:left;">
+                                                <span class="badge bg-info px-2 py-1" style="font-size: 10px;">Confirmed</span>
+                                                <span class="small">Konfirmasi</span>
+                                                @if($data->status === 'confirmed')<i class="bx bx-check ms-auto text-primary"></i>@endif
+                                            </button>
+                                        </form>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'completed' ? 'active bg-light text-dark fw-bold' : '' }}" 
-                                           href="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/completed">
-                                            <span class="badge bg-success px-2 py-1" style="font-size: 10px;">Completed</span>
-                                            <span class="small">Selesai</span>
-                                            @if($data->status === 'completed')<i class="bx bx-check ms-auto text-primary"></i>@endif
-                                        </a>
+                                        <form action="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/completed" method="POST" class="m-0 p-0">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'completed' ? 'active bg-light text-dark fw-bold' : '' }}" style="border:none; background:transparent; width:100%; text-align:left;">
+                                                <span class="badge bg-success px-2 py-1" style="font-size: 10px;">Completed</span>
+                                                <span class="small">Selesai</span>
+                                                @if($data->status === 'completed')<i class="bx bx-check ms-auto text-primary"></i>@endif
+                                            </button>
+                                        </form>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'cancelled' ? 'active bg-light text-dark fw-bold' : '' }}" 
-                                           href="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/cancelled">
-                                            <span class="badge bg-danger px-2 py-1" style="font-size: 10px;">Cancelled</span>
-                                            <span class="small">Batal</span>
-                                            @if($data->status === 'cancelled')<i class="bx bx-check ms-auto text-primary"></i>@endif
-                                        </a>
+                                        <form action="/admin-area/pasien/status/{{ Crypt::encrypt($data->id_pasien) }}/cancelled" method="POST" class="m-0 p-0">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 {{ $data->status === 'cancelled' ? 'active bg-light text-dark fw-bold' : '' }}" style="border:none; background:transparent; width:100%; text-align:left;">
+                                                <span class="badge bg-danger px-2 py-1" style="font-size: 10px;">Cancelled</span>
+                                                <span class="small">Batal</span>
+                                                @if($data->status === 'cancelled')<i class="bx bx-check ms-auto text-primary"></i>@endif
+                                            </button>
+                                        </form>
                                     </li>
                                 </ul>
                             </div>
@@ -163,9 +187,26 @@
                                 <a class="btn btn-sm btn-outline-info d-inline-flex align-items-center gap-1" href="/admin-area/pasien/invoice/{{ Crypt::encrypt($data->id_pasien) }}" target="_blank">
                                     <i class="bx bx-receipt"></i> <span>Invoice</span>
                                 </a>
-                                <a class="btn btn-sm btn-outline-danger d-inline-flex align-items-center" href="/admin-area/pasien/delete/{{ Crypt::encrypt($data->id_pasien) }}" onclick="return confirm('Hapus data pasien {{ addslashes($data->nama_pasien) }}?')">
-                                    <i class="bx bx-trash"></i>
+                                @php
+                                    $cleanPhone = preg_replace('/\D/', '', $data->no_hp_pasien ?? '');
+                                    if (str_starts_with($cleanPhone, '0')) {
+                                        $cleanPhone = '62' . substr($cleanPhone, 1);
+                                    }
+                                @endphp
+                                @if(!empty($cleanPhone))
+                                <a class="btn btn-sm btn-outline-success d-inline-flex align-items-center" 
+                                   href="https://wa.me/{{ $cleanPhone }}?text=Halo%20Bpk%2FIbu%20{{ urlencode($data->nama_pasien) }}%2C%20kami%20dari%20Klinik%20FAM%20Dental%20Care%20ingin%20mengonfirmasi%20jadwal%20janji%20temu%20Anda." 
+                                   target="_blank" title="Kirim Pengingat WhatsApp">
+                                    <i class="bx bxl-whatsapp"></i>
                                 </a>
+                                @endif
+                                <form action="/admin-area/pasien/delete/{{ Crypt::encrypt($data->id_pasien) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data pasien {{ addslashes($data->nama_pasien) }}?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center" title="Hapus">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -181,3 +222,19 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+            document.querySelectorAll('.btn-status-dropdown').forEach(function (btn) {
+                new bootstrap.Dropdown(btn, {
+                    popperConfig: function (defaultBsPopperConfig) {
+                        return Object.assign({}, defaultBsPopperConfig, { strategy: 'fixed' });
+                    }
+                });
+            });
+        }
+    });
+</script>
+@endpush

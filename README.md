@@ -1,21 +1,38 @@
-# 🦷 KlinikDentalKesehatan
+# 🦷 FAM Dental Care (KlinikDentalKesehatan)
 
-Aplikasi web manajemen klinik gigi berbasis **Laravel 8**, mencakup sistem reservasi janji temu pasien, manajemen dokter, galeri foto, agenda kegiatan, dan panel admin lengkap.
+Aplikasi web manajemen klinik gigi modern berbasis **Laravel 11**, dirancang untuk klinik **FAM Dental Care**. Aplikasi mencakup sistem reservasi janji temu pasien publik, manajemen dokter, katalog layanan & tarif, artikel edukasi/berita gigi, galeri foto terorganisir, agenda kegiatan klinik, peta situs (sitemap SEO), hingga panel admin terproteksi multi-role.
 
 ---
 
 ## ✨ Fitur Utama
 
-- **Halaman publik** — Landing page klinik (informasi, dokter, galeri)
-- **Reservasi online** — Form janji temu pasien dengan email konfirmasi otomatis
-- **Dashboard admin** — Statistik ringkas + grafik kunjungan mingguan
-- **Manajemen pasien** — CRUD, status tracking, export Excel, invoice
-- **Manajemen dokter** — CRUD + upload foto
-- **Galeri foto** — Dengan kategori, upload, soft delete
-- **Agenda kegiatan** — CRUD agenda klinik
-- **Informasi umum** — Edit visi, misi, deskripsi, foto sampul
-- **Recycle Bin** — Restore & force delete data terhapus
-- **Multi-role** — `superadmin` (kelola semua) & `operator` (akses terbatas)
+- **Halaman Publik Modern** — Landing page profil klinik, dokter spesialis, galeri tindakan, artikel edukasi gigi, dan rincian tarif layanan.
+- **Reservasi Online Aman**
+  - Form janji temu pasien dengan validasi waktu (`after_or_equal:today`), deteksi bentrok jadwal dokter, dan format nomor telepon Indonesia (`08...`/`+62...`).
+  - Proteksi manipulasi harga: penetapan tindakan medis & tarif hanya dapat ditentukan oleh admin melalui panel internal.
+  - Honeypot anti-spam tersembunyi untuk menangkal bot tanpa mengganggu pengalaman pengguna.
+  - Checkbox persetujuan pemrosesan data (kepatuhan UU PDP / regulasi privasi medis).
+  - Notifikasi email otomatis dan asinkron (`ShouldQueue`) untuk konfirmasi pasien dan notifikasi ringkas ke tim admin.
+- **Dashboard & Analitik**
+  - Grafik tren kunjungan mingguan otomatis dengan middleware `TrackVisitor` yang efisien (1 query agregasi).
+  - Ringkasan total pasien, dokter, artikel berita, dan tindakan.
+- **Manajemen Pasien & Rekam Medis**
+  - CRUD pasien, pembaruan status (`pending`, `confirmed`, `completed`, `cancelled`).
+  - Pencarian fleksibel berbasis GET dengan pagination persisten (`withQueryString`).
+  - Cetak invoice perawatan resmi.
+  - Export data pasien ke Excel (.xlsx) dengan sanitasi formula injection.
+- **Katalog Layanan & Tarif** — Pengelolaan daftar perawatan, estimasi biaya (`harga_mulai` s/d `harga_sampai`), dan toggle status aktif.
+- **Artikel & Edukasi Kesehatan Gigi** — Publikasi artikel gigi dengan penanganan slug unik, status draft/published, dan rendering rich-text yang telah disanitasi.
+- **Manajemen Dokter & Jadwal** — Profil dokter, STR, SIP, jadwal praktik, foto resmi, dan relasi langsung ke data pendaftaran pasien.
+- **Galeri Foto & Kategori** — Portofolio klinik dengan proteksi integritas: kategori tidak dapat dihapus jika masih menaungi foto aktif.
+- **Recycle Bin (Trash)** — Sistem Soft Delete menyeluruh (Pasien, Dokter, Galeri, Kegiatan, Berita, Pengguna). File foto fisik tetap tersimpan aman di disk selama masa soft delete dan hanya dimusnahkan secara permanen pada saat force delete.
+- **Keamanan & Multi-Role**
+  - Role berjenjang: `superadmin` (kontrol penuh), `admin` (operasional penuh minus akun), dan `operator` (staf pendaftaran/pelayanan).
+  - Proteksi akun: pencegahan penghapusan akun sendiri dan pemblokiran penghapusan akun superadmin terakhir.
+  - URL ID terenkripsi dengan penanganan `DecryptException` ramah pengguna (tanpa error 500 mentah).
+  - Sanitasi HTML tingkat parser (DOMDocument allowlist) untuk menangkal Stored XSS pada rich-text.
+  - Rate limiting login (5 percobaan per menit) dan regenerasi session otomatis.
+- **SEO & Peta Situs** — Route otomatis `/sitemap.xml` dinamis dan `robots.txt` standar produksi.
 
 ---
 
@@ -23,169 +40,146 @@ Aplikasi web manajemen klinik gigi berbasis **Laravel 8**, mencakup sistem reser
 
 | Komponen | Teknologi |
 |----------|-----------|
-| Backend | Laravel 8.x |
-| PHP | ^7.3 / ^8.0 |
-| Database | MySQL |
-| Auth | Laravel Session Auth + Sanctum |
-| Export | Maatwebsite/Excel 3.1 |
-| Alert | realrashid/sweet-alert |
-| Build Tool | Laravel Mix (Webpack) |
+| Backend Framework | Laravel 11.x |
+| PHP Version | ^8.2 / ^8.3 |
+| Database | MySQL / MariaDB (dukungan SQLite untuk testing in-memory) |
+| Frontend | Bootstrap 5, Vanilla CSS, FontAwesome, Blade Templating |
+| Authentication | Laravel Session Auth + Custom Role Middleware |
+| Excel Export | Maatwebsite/Excel 3.1 |
+| Alert System | realrashid/sweet-alert |
+| CI / Automation | GitHub Actions (`.github/workflows/ci.yml`) |
+| Code Formatter | Laravel Pint (`pint.json`) |
 
 ---
 
-## 🚀 Instalasi & Setup
+## 🚀 Instalasi & Setup Lokal
 
 ### 1. Clone Repository
-
 ```bash
 git clone <url-repository>
 cd KlinikDentalKesehatan
 ```
 
-### 2. Install Dependensi PHP
-
+### 2. Install Dependensi PHP & Frontend
 ```bash
 composer install
+npm install && npm run build
 ```
 
-### 3. Install Dependensi Node.js
-
-```bash
-npm install
-npm run dev
-```
-
-### 4. Konfigurasi Environment
-
+### 3. Konfigurasi Environment
+Salin template konfigurasi:
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Edit file `.env` dan sesuaikan konfigurasi berikut:
-
+Sesuaikan variabel utama pada `.env`:
 ```env
-APP_NAME="Klinik Dental Kesehatan"
-APP_URL=http://localhost
+APP_NAME="FAM Dental Care"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=klinikdental
+DB_DATABASE=klinikfamdentalcare
 DB_USERNAME=root
 DB_PASSWORD=
 
-# Konfigurasi Email (untuk konfirmasi janji temu)
+# Kredensial Superadmin Awal untuk Seeder
+ADMIN_EMAIL=admin@klinikfamdentalcare.com
+ADMIN_PASSWORD=UbahPasswordIni123!
+
+# Antrean & Mail
+QUEUE_CONNECTION=database
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.mailtrap.io
 MAIL_PORT=2525
 MAIL_USERNAME=null
 MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="noreply@klinikdental.com"
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@klinikfamdentalcare.com"
 MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-### 5. Jalankan Migrasi Database
-
+### 4. Migrasi & Seeder Database
+Jalankan migrasi dan isi data awal:
 ```bash
-php artisan migrate
+php artisan migrate --seed
 ```
+> **Catatan Seeder:** `AdminSeeder` bersifat *idempoten* (`updateOrCreate`) dan membaca kredensial dari file `.env`, sehingga aman dijalankan berulang tanpa menghapus akun yang sudah ada.
 
-### 6. (Opsional) Jalankan Seeder
-
-```bash
-php artisan db:seed
-```
-
-### 7. Buat Symbolic Link Storage
-
+### 5. Buat Storage Link & Jalankan Worker
 ```bash
 php artisan storage:link
+php artisan queue:work
 ```
 
-### 8. Jalankan Aplikasi
-
+### 6. Jalankan Server Lokal
 ```bash
 php artisan serve
 ```
-
-Akses di browser: `http://localhost:8000`
-
----
-
-## 👥 Akun & Role
-
-| Role | Akses |
-|------|-------|
-| `superadmin` | Akses penuh semua fitur termasuk manajemen akun pengguna |
-| `operator` | Akses semua fitur kecuali manajemen akun pengguna |
+Aplikasi dapat diakses di browser melalui `http://localhost:8000`.
 
 ---
 
-## 📂 Struktur Direktori Penting
+## 👥 Matriks Hak Akses (Role Matrix)
 
-```
-app/
-├── Http/Controllers/   # Controller untuk setiap fitur
-├── Http/Middleware/    # Termasuk RoleMiddleware
-├── Models/             # Model Eloquent (Pasien, Dokter, Galeri, dll)
-├── Exports/            # PasienExport untuk Excel
-└── Mail/               # AppointmentConfirmation email
-
-database/
-└── migrations/         # Semua file migrasi database
-
-resources/views/
-├── admin/              # View panel admin (25+ halaman)
-├── main/               # View halaman publik
-└── emails/             # Template email
-
-routes/
-└── web.php             # Definisi semua route
-```
+| Modul / Aksi | Superadmin | Admin | Operator |
+|--------------|:----------:|:-----:|:--------:|
+| Dashboard & Statistik | ✅ | ✅ | ✅ |
+| Manajemen Pasien & Status | ✅ | ✅ | ✅ |
+| Cetak Invoice Pasien | ✅ | ✅ | ✅ |
+| Ekspor Excel Pasien | ✅ | ✅ | ❌ |
+| Dokter, Jadwal, & Foto | ✅ | ✅ | ❌ |
+| Katalog Layanan & Tarif | ✅ | ✅ | ❌ |
+| Galeri & Kategori | ✅ | ✅ | ❌ |
+| Berita & Edukasi Gigi | ✅ | ✅ | ❌ |
+| Informasi Umum & Tupoksi | ✅ | ✅ | ❌ |
+| Akses Trash (Recycle Bin) | ✅ | ✅ | ❌ |
+| Manajemen Akun Pengguna (`/admin-area/akun`) | ✅ | ❌ | ❌ |
 
 ---
 
-## 🧪 Menjalankan Tests
+## 🧪 Pengujian Otomatis (Automated Testing)
 
+Jalankan seluruh rangkaian pengujian fitur dan unit:
 ```bash
 php artisan test
 ```
 
-Atau untuk test spesifik:
-
+Menjalankan pengujian spesifik keamanan dan otorisasi:
 ```bash
-php artisan test --filter AuthTest
-php artisan test --filter PasienTest
+php artisan test tests/Feature/SecurityAndRoleTest.php
+php artisan test tests/Feature/AuthTest.php
+php artisan test tests/Feature/PasienTest.php
 ```
 
 ---
 
-## 📋 Format ID
+## 📋 Standar Format ID
 
-| Entitas | Format | Contoh |
-|---------|--------|--------|
-| Akun Admin | AK-XXX | AK-001 |
-| Dokter | DOK-XXX | DOK-001 |
-| Galeri | GL-XXX | GL-001 |
-| Kategori | KT-XXX | KT-001 |
-| Kegiatan | KGT-XXX | KGT-001 |
-| Pasien | PSN-XXX (display) | PSN-001 |
+| Entitas | Prefix | Generator ID | Contoh |
+|---------|:------:|--------------|--------|
+| Akun Admin / User | `ADM` | `IdGenerator::generate(User::class, 'ADM')` | `ADM-001` |
+| Dokter | `DOK` | `IdGenerator::generate(Dokter::class, 'DOK')` | `DOK-001` |
+| Galeri | `GLR` | `IdGenerator::generate(Galeri::class, 'GLR')` | `GLR-001` |
+| Kategori Galeri | `KTG` | `IdGenerator::generate(Kategori::class, 'KTG')` | `KTG-001` |
+| Kegiatan | `KGT` | `IdGenerator::generate(Kegiatan::class, 'KGT')` | `KGT-001` |
+| Berita | `BRT` | `IdGenerator::generate(Berita::class, 'BRT')` | `BRT-001` |
+| Pasien | `PSN` | Accessor Auto-pad `id_pasien` | `PSN-001` |
 
 ---
 
-## 🔐 Keamanan
+## 🛡️ Kebijakan Keamanan & Hardening
 
-- CSRF Protection aktif di semua form
-- Rate limiting login (max 5 percobaan/menit)
-- ID sensitif dienkripsi di URL
-- Password di-hash dengan Bcrypt
-- Session ID diregenerasi setelah login
-- Role-based access control (superadmin / operator)
+1. **CSRF Enforcement:** Seluruh aksi mutasi dan penghapusan data wajib menggunakan method `POST` / `DELETE` / `PATCH` dengan token `@csrf`.
+2. **XSS Protection:** Penggunaan `{{ }}` untuk escaping judul/nama secara default. Field rich-text diproses melalui allowlist HTML tag (`<p>`, `<b>`, `<i>`, `<ul>`, `<ol>`, `<li>`, `<a>`, `<br>`) sebelum disimpan.
+3. **Penyimpanan Berkas:** Ekstensi file foto divalidasi dan diubah menjadi nama acak timestamp unik untuk mencegah path traversal dan script execution.
+4. **Proteksi Formula Injection:** Seluruh nilai bertipe string pada ekspor spreadsheet disaring dari karakter awalan berbahaya (`=`, `+`, `-`, `@`).
 
 ---
 
 ## 📝 Lisensi
-
-MIT License
+Proyek ini dilisensikan di bawah lisensi [MIT](LICENSE).

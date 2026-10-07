@@ -13,33 +13,34 @@ class AkunController extends Controller
 {
     /**
      * Menyimpan akun admin baru ke database.
-     * P1-Fix: Tambah validasi tipe & ukuran file foto profil.
-     * P4-Fix: Tambah PHPDoc.
+     * Saat ini hanya ada satu role: superadmin (otomatis, tanpa pilihan role).
      */
-    public function account_submit(Request $request) {
-        // P1: Validasi file foto profil sebelum proses
+    public function account_submit(Request $request)
+    {
         $request->validate([
             'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
+        $idUser  = User::generateID();
         $img     = $request->foto;
         $imgext  = $request->foto->extension();
-        $imgname = time().'-'.User::generateID().'.'.$imgext;
+        $imgname = time() . '-' . $idUser . '.' . $imgext;
 
         $request->merge([
-            'id'           => User::generateID(),
+            'id'           => $idUser,
             'profile_pict' => $imgname,
         ]);
 
         $validated = $request->validate([
-            'id'           => 'required|unique:users',
+            'id'           => 'required|unique:users,id',
             'name'         => 'required|max:255',
-            'email'        => 'required|email|unique:users',
+            'email'        => 'required|email|unique:users,email',
             'password'     => 'required_with:retype_password|same:retype_password|min:8|max:255',
             'profile_pict' => 'required',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        $validated['role']     = 'superadmin';
 
         $query = User::create($validated);
 
@@ -47,149 +48,139 @@ class AkunController extends Controller
 
         if ($query) {
             return redirect('/admin-area/akun')->with('success', 'Berhasil menambahkan data akun.');
-        } else {
-            return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam menambahkan data akun.');
         }
+
+        return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam menambahkan data akun.');
     }
 
     /**
      * Menampilkan form edit akun admin berdasarkan ID terenkripsi.
-     *
-     * @param string $id   ID akun terenkripsi
-     * @param bool   $from true = dari halaman detail profil, false = dari daftar akun
      */
-    public function account_edit($id, $from) {
+    public function account_edit($id, $from)
+    {
         $account = User::where('id', decrypt($id))->get();
 
-        if ($from == true) {
-            return view('admin.account_edit', [
-                'title'   => 'Edit Data Pengguna',
-                'menu'    => 'pengguna',
-                'account' => $account,
-                'admin'   => true,
-            ]);
-        } else {
-            return view('admin.account_edit', [
-                'title'   => 'Edit Data Pengguna',
-                'menu'    => 'pengguna',
-                'account' => $account,
-                'admin'   => false,
-            ]);
-        }
+        return view('admin.account_edit', [
+            'title'   => 'Edit Data Pengguna',
+            'menu'    => 'pengguna',
+            'account' => $account,
+            'admin'   => (bool) $from,
+        ]);
     }
 
     /**
      * Memperbarui data akun admin: password, foto profil, atau informasi umum.
-     * P1-Fix: Tambah validasi tipe file foto profil.
+     * Role tidak dapat diubah (hanya superadmin).
      */
-    public function account_update(Request $request) {
-        $img         = $request->foto;
-        $pass_check  = $request->password;
-        $query_check = User::where('id', $request->id)->get();
+    public function account_update(Request $request)
+    {
+        $targetUser = User::where('id', $request->id)->firstOrFail();
+        $img        = $request->foto;
+        $pass_check = $request->password;
 
         if ($pass_check != null) {
-            // Update password
-            if (Hash::check($request->old_password, $query_check[0]->password)) {
+            if (Hash::check($request->old_password, $targetUser->password)) {
                 $validated = $request->validate([
                     'password' => 'required_with:retype_password|same:retype_password|min:8|max:255',
                 ]);
 
-                $validated['password'] = Hash::make($validated['password']);
+                $targetUser->password = Hash::make($validated['password']);
+                $targetUser->save();
             } else {
                 return redirect()->back()->with('error_pass', 'Sandi tidak sama dengan database');
             }
         } elseif ($img != null) {
-            // P1: Validasi tipe file foto profil
             $request->validate([
-                'foto' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                'foto'  => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                'name'  => 'required|max:255',
+                'email' => ['required', 'email', Rule::unique('users')->ignore($request->id)],
             ]);
 
             $imgext  = $request->foto->extension();
-            $imgname = time().'-'.$request->id.'.'.$imgext;
-
-            $request->merge([
-                'profile_pict' => $imgname,
-            ]);
-
-            $validated = $request->validate([
-                'name'         => 'required|max:255',
-                'email'        => ['required', 'email', Rule::unique('users')->ignore($request->id)],
-                'profile_pict' => 'required',
-            ]);
+            $imgname = time() . '-' . $request->id . '.' . $imgext;
 
             User::deleteImage($request->id);
             $img->move(public_path('/img/account'), $imgname);
+
+            $targetUser->name         = $request->name;
+            $targetUser->email        = $request->email;
+            $targetUser->profile_pict = $imgname;
+
+            $targetUser->save();
         } else {
-            // Update informasi umum (nama & email)
             $validated = $request->validate([
                 'name'  => 'required|max:255',
                 'email' => ['required', 'email', Rule::unique('users')->ignore($request->id)],
             ]);
+
+            $targetUser->name  = $validated['name'];
+            $targetUser->email = $validated['email'];
+
+            $targetUser->save();
         }
 
-        $query = User::where('id', $request->id)->update($validated);
-
-        if ($query) {
-            return redirect('/admin-area/akun')->with('success', 'Berhasil mengedit data akun.');
-        } else {
-            return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam mengedit data akun.');
-        }
+        return redirect('/admin-area/akun')->with('success', 'Berhasil mengedit data akun.');
     }
 
     /**
      * Menghapus akun admin beserta foto profil-nya.
-     * Jika yang dihapus adalah akun sendiri, akan logout otomatis.
+     * #15 Fix: Cegah penghapusan diri sendiri dan superadmin terakhir.
      */
-    public function account_delete($id, $from) {
-        User::deleteImage(decrypt($id));
+    public function account_delete($id, $from)
+    {
+        $realId = decrypt($id);
 
-        $query = User::destroy(decrypt($id));
+        if ($realId === Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $target = User::findOrFail($realId);
+
+        if ($target->role === 'superadmin' && User::where('role', 'superadmin')->count() <= 1) {
+            return redirect()->back()->with('error', 'Tidak dapat menghapus superadmin terakhir pada sistem.');
+        }
+
+        User::deleteImage($realId);
+        $query = User::destroy($realId);
 
         if ($query) {
-            if ($from == false) {
-                return redirect('/admin-area/akun')->with('success', 'Berhasil menghapus data akun.');
-            } else {
-                return redirect('/logout')->with('msg', 'deleted');
-            }
-        } else {
-            return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam menghapus data akun.');
+            return redirect('/admin-area/akun')->with('success', 'Berhasil menghapus data akun.');
         }
+
+        return redirect('/admin-area/akun')->with('error', 'Terjadi kesalahan dalam menghapus data akun.');
     }
 
     /**
-     * Mencari akun admin berdasarkan nama, email, atau ID.
+     * #12 & #13 Fix: Mencari akun admin via GET request dengan pagination yang membawa query string.
      */
-    public function account_search(Request $request) {
-        $request->merge([
-            'cari' => '%'.$request->cari.'%',
-        ]);
+    public function account_search(Request $request)
+    {
+        $keyword = trim((string) $request->input('cari'));
 
-        $validated = $request->validate([
-            'cari' => 'required',
-        ]);
-
-        $query = User::where('name', 'like', $validated)
-                     ->orWhere('email', 'like', $validated)
-                     ->orWhere('id', 'like', $validated)
-                     ->paginate(8);
-
-        if ($query->isNotEmpty()) {
-            return view('admin.account', [
-                'title'   => 'Hasil Pencarian Akun : '.$request->cari,
-                'menu'    => 'pengguna',
-                'account' => $query,
-            ]);
-        } else {
-            return redirect()->back()->with('message', 'Akun tidak ditemukan.');
+        if ($keyword === '') {
+            return redirect('/admin-area/akun');
         }
+
+        $query = User::where(function ($q) use ($keyword) {
+            $q->where('name', 'like', "%{$keyword}%")
+              ->orWhere('email', 'like', "%{$keyword}%")
+              ->orWhere('id', 'like', "%{$keyword}%")
+              ->orWhere('role', 'like', "%{$keyword}%");
+        })->paginate(8)->withQueryString();
+
+        return view('admin.account', [
+            'title'   => 'Hasil Pencarian Akun: ' . $keyword,
+            'menu'    => 'pengguna',
+            'account' => $query,
+            'cari'    => $keyword,
+        ]);
     }
 
     /**
      * Memproses login admin.
-     * P1-Fix: Throttle sudah ditambahkan di route (throttle:5,1).
-     * P2-Fix (sebelumnya): Validasi email:dns diganti email agar tidak gagal karena DNS lookup.
      */
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $credentials = $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
@@ -197,12 +188,10 @@ class AkunController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // K14 Fix: Log login berhasil
             Log::info('Admin login successful', ['email' => $request->email, 'ip' => $request->ip()]);
             return redirect()->intended('/admin-area');
         }
 
-        // K14 Fix: Log percobaan login gagal
         Log::warning('Admin login failed', ['email' => $request->email, 'ip' => $request->ip()]);
         return back()->with('message', 'E-Mail / Sandi yang anda masukkan salah.');
     }
@@ -210,24 +199,24 @@ class AkunController extends Controller
     /**
      * Memproses logout admin dan mengakhiri sesi.
      */
-    public function logout() {
+    public function logout()
+    {
         Auth::logout();
-
         session()->invalidate();
-
         session()->regenerateToken();
 
         if (session()->has('msg')) {
             return redirect('/login')->with('message', 'Penghapusan akun berhasil.');
-        } else {
-            return redirect('/login');
         }
+
+        return redirect('/login');
     }
 
     /**
      * Menampilkan halaman detail akun yang sedang login.
      */
-    public function account_detail() {
+    public function account_detail()
+    {
         $account = User::where('id', Auth::user()->id)->get();
 
         return view('admin.account_details', [
@@ -240,7 +229,8 @@ class AkunController extends Controller
     /**
      * Menampilkan halaman pengaturan akun yang sedang login.
      */
-    public function settings() {
+    public function settings()
+    {
         return view('admin.settings', [
             'title' => 'Pengaturan Akun',
             'menu'  => 'pengaturan',
@@ -251,12 +241,13 @@ class AkunController extends Controller
     /**
      * Memperbarui profil / password akun yang sedang login dari halaman Pengaturan.
      */
-    public function settings_update(Request $request) {
+    public function settings_update(Request $request)
+    {
         $user = Auth::user();
 
         $request->validate([
             'name'         => 'required|max:255',
-            'email'        => 'required|email|unique:users,email,'.$user->id.',id',
+            'email'        => 'required|email|unique:users,email,' . $user->id . ',id',
             'old_password' => 'nullable|required_with:new_password',
             'new_password' => 'nullable|min:8|same:confirm_password',
             'foto'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -276,7 +267,7 @@ class AkunController extends Controller
             User::deleteImage($user->id);
             $img     = $request->foto;
             $imgext  = $img->extension();
-            $imgname = time().'-'.$user->id.'.'.$imgext;
+            $imgname = time() . '-' . $user->id . '.' . $imgext;
             $img->move(public_path('/img/account'), $imgname);
             $user->profile_pict = $imgname;
         }
@@ -286,4 +277,3 @@ class AkunController extends Controller
         return redirect('/admin-area/pengaturan')->with('success', 'Pengaturan profil berhasil diperbarui.');
     }
 }
-

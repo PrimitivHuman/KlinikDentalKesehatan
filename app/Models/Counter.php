@@ -11,39 +11,35 @@ class Counter extends Model
 
     protected $table = 'counter';
 
-    // K9 Fix: Hapus primaryKey kosong — tabel counter tidak memiliki PK tunggal.
-    // Operasi query tetap berjalan via where() clause, bukan via primary key.
     public $incrementing = false;
     public $timestamps   = false;
 
-    protected $fillable = ['date', 'ip'];
+    protected $fillable = ['date', 'ip', 'ip_addr', 'count'];
 
     /**
-     * Mengambil data kunjungan pengunjung dalam rentang satu minggu saat ini.
+     * #7 Fix: Mengambil data kunjungan seminggu dalam 1 query efisien.
      * Mengembalikan array: [collection_seminggu, jml_senin, selasa, rabu, kamis, jumat, sabtu, minggu]
-     *
-     * @return array
      */
     public static function getCounterData(): array
     {
-        $mon = date("Y-m-d", strtotime('monday this week'));
-        $tue = date("Y-m-d", strtotime('tuesday this week'));
-        $wed = date("Y-m-d", strtotime('wednesday this week'));
-        $thu = date("Y-m-d", strtotime('thursday this week'));
-        $fri = date("Y-m-d", strtotime('friday this week'));
-        $sat = date("Y-m-d", strtotime('saturday this week'));
-        $sun = date("Y-m-d", strtotime("sunday this week"));
+        $start = date("Y-m-d", strtotime('monday this week'));
+        $end   = date("Y-m-d", strtotime('sunday this week'));
 
-        $query = Counter::whereBetween('date', [$mon, $sun])->get();
+        $records = Counter::whereBetween('date', [$start, $end])->get();
 
-        $query1 = Counter::where('date', $mon)->count();
-        $query2 = Counter::where('date', $tue)->count();
-        $query3 = Counter::where('date', $wed)->count();
-        $query4 = Counter::where('date', $thu)->count();
-        $query5 = Counter::where('date', $fri)->count();
-        $query6 = Counter::where('date', $sat)->count();
-        $query7 = Counter::where('date', $sun)->count();
+        $dailyCounts = [];
+        for ($i = 0; $i < 7; $i++) {
+            $day = date("Y-m-d", strtotime("monday this week +{$i} days"));
+            $dailyCounts[$day] = 0;
+        }
 
-        return [$query, $query1, $query2, $query3, $query4, $query5, $query6, $query7];
+        foreach ($records as $r) {
+            $d = substr((string) $r->date, 0, 10);
+            if (isset($dailyCounts[$d])) {
+                $dailyCounts[$d] += (int) ($r->count ?? 1);
+            }
+        }
+
+        return array_merge([$records], array_values($dailyCounts));
     }
 }

@@ -6,12 +6,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\DB;
+use App\Support\IdGenerator;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $primaryKey = 'id';
     protected $keyType    = 'string';
@@ -22,7 +23,7 @@ class User extends Authenticatable
      * Nilai default atribut model.
      */
     protected $attributes = [
-        'role'         => 'admin',
+        'role'         => 'superadmin',
         'profile_pict' => 'default.png',
     ];
 
@@ -35,7 +36,7 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_pict',
-        'role', // P3: Kolom role (admin | operator)
+        'role', // Saat ini hanya satu role: superadmin
     ];
 
     /**
@@ -62,18 +63,7 @@ class User extends Authenticatable
      */
     public static function generateID(): string
     {
-        return DB::transaction(function () {
-            $lastId = User::lockForUpdate()->max('id');
-
-            if ($lastId) {
-                preg_match('/\d+$/', $lastId, $matches);
-                $num = isset($matches[0]) ? (int) $matches[0] : 0;
-            } else {
-                $num = 0;
-            }
-
-            return 'AK-' . str_pad($num + 1, 3, '0', STR_PAD_LEFT);
-        });
+        return IdGenerator::next('AK-', User::query(), 'id');
     }
 
     /**

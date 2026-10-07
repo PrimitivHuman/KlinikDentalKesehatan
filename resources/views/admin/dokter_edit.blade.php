@@ -3,17 +3,13 @@
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <!-- Breadcrumbs & Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-        <div>
-            <h4 class="fw-bold mb-1 text-dark">Edit Data Dokter</h4>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="/admin-area" class="text-muted">Beranda</a></li>
-                    <li class="breadcrumb-item"><a href="/admin-area/dokter" class="text-muted">Data Dokter</a></li>
-                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">{{ $dokter->nama_dokter }}</li>
-                </ol>
-            </nav>
-        </div>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center py-3 mb-4 gap-3">
+        <h4 class="fw-bold mb-0">
+            <span class="text-muted fw-light">
+                <a href="/admin-area" class="a-breadcrumbs">Beranda</a> /
+                <a href="/admin-area/dokter" class="a-breadcrumbs">Data Dokter</a> /
+            </span> Edit Data Dokter
+        </h4>
         <a href="/admin-area/dokter" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1">
             <i class="bx bx-arrow-back"></i>
             <span>Kembali</span>

@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                {!! html_entity_decode($about[0] -> informasi_umum) !!}
+                {!! \App\Support\Sanitizer::html($about[0] -> informasi_umum) !!}
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-                {!! html_entity_decode($about[0] -> visi) !!}
+                {!! \App\Support\Sanitizer::html($about[0] -> visi) !!}
             </div>
             <div class="col-sm-12 col-md-6">
                 <div class="row">
@@ -70,7 +70,21 @@
                         </div>
                     </div>
                 </div>
-                {!! html_entity_decode($about[0] -> misi) !!}
+                {!! \App\Support\Sanitizer::html($about[0] -> misi) !!}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <h4 class="card-header">
+            Tugas Pokok &amp; Fungsi
+        </h4>
+        <div class="row p-4">
+            <div class="col-12">
+                <div class="d-flex flex-row-reverse mb-2">
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalTupoksi"><i class='bx bx-edit-alt'></i></button>
+                </div>
+                {!! \App\Support\Sanitizer::html($about[0] -> tupoksi) !!}
             </div>
         </div>
     </div>
@@ -141,7 +155,7 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label class="form-label">Deskripsi</label>
-                                <textarea name="informasi_umum" id="summernote">{!! html_entity_decode($about[0] -> informasi_umum) !!}</textarea>
+                                <textarea name="informasi_umum" id="summernote">{!! \App\Support\Sanitizer::html($about[0] -> informasi_umum) !!}</textarea>
                                 @error('informasi_umum')
                                 <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
                                     {{ $message }}
@@ -175,7 +189,7 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label class="form-label">Visi</label>
-                                <textarea name="visi" id="summernote2">{!! html_entity_decode($about[0] -> visi) !!}</textarea>
+                                <textarea name="visi" id="summernote2">{!! \App\Support\Sanitizer::html($about[0] -> visi) !!}</textarea>
                                 @error('visi')
                                 <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
                                     {{ $message }}
@@ -209,7 +223,7 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label class="form-label">Misi</label>
-                                <textarea name="misi" id="summernote3">{!! html_entity_decode($about[0] -> misi) !!}</textarea>
+                                <textarea name="misi" id="summernote3">{!! \App\Support\Sanitizer::html($about[0] -> misi) !!}</textarea>
                                 @error('misi')
                                 <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
                                     {{ $message }}
@@ -243,8 +257,8 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label class="form-label">Tugas Pokok & Fungsi</label>
-                                <textarea name="tupoksi" id="summernote4">{!! html_entity_decode($about[0] -> tupoksi) !!}</textarea>
-                                @error('tujuan')
+                                <textarea name="tupoksi" id="summernote4">{!! \App\Support\Sanitizer::html($about[0] -> tupoksi) !!}</textarea>
+                                @error('tupoksi')
                                 <div id="defaultFormControlHelp" class="form-text bg-warning text-black">
                                     {{ $message }}
                                 </div>

@@ -53,8 +53,15 @@
                                 <td>{{ $p->tanggal_janji }}</td>
                                 <td>{{ $p->deleted_at }}</td>
                                 <td>
-                                    <a href="/admin-area/trash/restore/pasien/{{ encrypt($p->id_pasien) }}" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</a>
-                                    <a href="/admin-area/trash/force-delete/pasien/{{ encrypt($p->id_pasien) }}" onclick="return confirm('Hapus permanen pasien ini?')" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</a>
+                                    <form action="/admin-area/trash/restore/pasien/{{ encrypt($p->id_pasien) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</button>
+                                    </form>
+                                    <form action="/admin-area/trash/force-delete/pasien/{{ encrypt($p->id_pasien) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus permanen pasien ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty
@@ -88,8 +95,15 @@
                                 <td>{{ $d->sip_dokter }}</td>
                                 <td>{{ $d->deleted_at }}</td>
                                 <td>
-                                    <a href="/admin-area/trash/restore/dokter/{{ encrypt($d->id_dokter) }}" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</a>
-                                    <a href="/admin-area/trash/force-delete/dokter/{{ encrypt($d->id_dokter) }}" onclick="return confirm('Hapus permanen dokter ini?')" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</a>
+                                    <form action="/admin-area/trash/restore/dokter/{{ encrypt($d->id_dokter) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</button>
+                                    </form>
+                                    <form action="/admin-area/trash/force-delete/dokter/{{ encrypt($d->id_dokter) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus permanen dokter ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty
@@ -121,8 +135,15 @@
                                 <td><strong>{{ $g->judul }}</strong></td>
                                 <td>{{ $g->deleted_at }}</td>
                                 <td>
-                                    <a href="/admin-area/trash/restore/galeri/{{ encrypt($g->id_galeri) }}" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</a>
-                                    <a href="/admin-area/trash/force-delete/galeri/{{ encrypt($g->id_galeri) }}" onclick="return confirm('Hapus permanen galeri ini?')" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</a>
+                                    <form action="/admin-area/trash/restore/galeri/{{ encrypt($g->id_galeri) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</button>
+                                    </form>
+                                    <form action="/admin-area/trash/force-delete/galeri/{{ encrypt($g->id_galeri) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus permanen galeri ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty
@@ -156,8 +177,15 @@
                                 <td>{{ $k->tgl_kegiatan }}</td>
                                 <td>{{ $k->deleted_at }}</td>
                                 <td>
-                                    <a href="/admin-area/trash/restore/kegiatan/{{ encrypt($k->id_kegiatan) }}" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</a>
-                                    <a href="/admin-area/trash/force-delete/kegiatan/{{ encrypt($k->id_kegiatan) }}" onclick="return confirm('Hapus permanen kegiatan ini?')" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</a>
+                                    <form action="/admin-area/trash/restore/kegiatan/{{ encrypt($k->id_kegiatan) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-success"><i class="bx bx-undo"></i> Pulihkan</button>
+                                    </form>
+                                    <form action="/admin-area/trash/force-delete/kegiatan/{{ encrypt($k->id_kegiatan) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus permanen kegiatan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bx bx-trash"></i> Hapus Permanen</button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty

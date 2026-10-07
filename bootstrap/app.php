@@ -3,36 +3,46 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
 | Laravel 11: bootstrap/app.php
 |--------------------------------------------------------------------------
-|
-| File ini menggantikan app/Http/Kernel.php dan menjadi titik konfigurasi
-| utama untuk routing, middleware, dan exception handling.
-|
 */
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Daftarkan alias middleware kustom
-        $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        // Percayai semua reverse proxy untuk tunneling (Cloudflare, Ngrok, Load Balancer)
+        $middleware->trustProxies(at: '*');
+
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
-        // Kecualikan route dari CSRF verification
+        $middleware->alias([
+            'role'          => \App\Http\Middleware\RoleMiddleware::class,
+            'track.visitor' => \App\Http\Middleware\TrackVisitor::class,
+        ]);
+
         $middleware->validateCsrfTokens(except: [
-            // 'stripe/*',
+            //
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Konfigurasi exception rendering di sini jika perlu
+        // #16 Fix: Tangani DecryptException secara anggun (404/redirect), bukan 500
+        $exceptions->render(function (DecryptException $e, Request $request) {
+            if ($request->is('admin-area*')) {
+                return redirect()->back()->with('error', 'Parameter ID yang diakses tidak valid atau telah dimodifikasi.');
+            }
+            abort(404, 'Halaman atau data yang Anda cari tidak ditemukan.');
+        });
     })
     ->create();

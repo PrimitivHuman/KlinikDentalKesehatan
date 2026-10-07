@@ -94,25 +94,78 @@ let menu, animate;
     accordionTriggerEl.addEventListener('hide.bs.collapse', accordionActiveFunction);
   });
 
-  // Auto update layout based on screen size
-  window.Helpers.setAutoUpdate(true);
-
   // Toggle Password Visibility
-  window.Helpers.initPasswordToggle();
+  function initPasswordToggle() {
+    const containers = document.querySelectorAll('.form-password-toggle');
+    containers.forEach(function (container) {
+      if (container.dataset.passwordToggleBound) return;
+      container.dataset.passwordToggleBound = 'true';
 
-  // Speech To Text
-  window.Helpers.initSpeechToText();
+      const input = container.querySelector('input');
+      const trigger = container.querySelector('.cursor-pointer, .input-group-text:last-child');
+      const icon = container.querySelector('i.bx-hide, i.bx-show') || (trigger ? trigger.querySelector('i') : null);
 
-  // Manage menu expanded/collapsed with templateCustomizer & local storage
-  //------------------------------------------------------------------
+      if (input && trigger) {
+        trigger.style.cursor = 'pointer';
+        trigger.setAttribute('role', 'button');
+        trigger.setAttribute('tabindex', '0');
+        trigger.setAttribute('title', 'Lihat kata sandi');
+        trigger.setAttribute('aria-label', 'Lihat kata sandi');
 
-  // If current layout is horizontal OR current window screen is small (overlay menu) than return from here
-  if (window.Helpers.isSmallScreen()) {
-    return;
+        const toggleVisibility = function (e) {
+          if (e) e.preventDefault();
+          const isPassword = input.type === 'password' || input.getAttribute('type') === 'password';
+          if (isPassword) {
+            input.setAttribute('type', 'text');
+            input.type = 'text';
+            if (icon) {
+              icon.classList.remove('bx-hide');
+              icon.classList.add('bx-show');
+            }
+            trigger.setAttribute('title', 'Sembunyikan kata sandi');
+            trigger.setAttribute('aria-label', 'Sembunyikan kata sandi');
+          } else {
+            input.setAttribute('type', 'password');
+            input.type = 'password';
+            if (icon) {
+              icon.classList.remove('bx-show');
+              icon.classList.add('bx-hide');
+            }
+            trigger.setAttribute('title', 'Lihat kata sandi');
+            trigger.setAttribute('aria-label', 'Lihat kata sandi');
+          }
+        };
+
+        trigger.addEventListener('click', toggleVisibility);
+        trigger.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleVisibility(e);
+          }
+        });
+      }
+    });
   }
 
-  // If current layout is vertical and current window screen is > small
+  // Register on Helpers and initialize
+  if (typeof window.Helpers !== 'undefined' && window.Helpers) {
+    window.Helpers.initPasswordToggle = initPasswordToggle;
+  }
+  initPasswordToggle();
 
-  // Auto update menu collapsed/expanded based on the themeConfig
-  window.Helpers.setCollapsed(true, false);
+  // Helper-dependent initializations (safely checked)
+  if (typeof window.Helpers !== 'undefined' && window.Helpers) {
+    if (typeof window.Helpers.setAutoUpdate === 'function') {
+      window.Helpers.setAutoUpdate(true);
+    }
+    if (typeof window.Helpers.initSpeechToText === 'function') {
+      window.Helpers.initSpeechToText();
+    }
+    if (typeof window.Helpers.isSmallScreen === 'function' && window.Helpers.isSmallScreen()) {
+      return;
+    }
+    if (typeof window.Helpers.setCollapsed === 'function') {
+      window.Helpers.setCollapsed(true, false);
+    }
+  }
 })();

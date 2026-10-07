@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
+use App\Support\IdGenerator;
 
 class Kegiatan extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \App\Models\Concerns\ClearsHomeCache;
 
     protected $table = 'kegiatans';
     protected $primaryKey = 'id_kegiatan';
@@ -47,16 +47,6 @@ class Kegiatan extends Model
      * @return string
      */
     public static function generateID() {
-        return DB::transaction(function () {
-            $last = Kegiatan::withTrashed()->lockForUpdate()->orderBy('id_kegiatan', 'desc')->first();
-            if (!$last) {
-                return 'KGT-001';
-            }
-
-            preg_match('/\d+$/', $last->id_kegiatan, $matches);
-            $number = isset($matches[0]) ? (int)$matches[0] + 1 : 1;
-
-            return 'KGT-' . str_pad($number, 3, '0', STR_PAD_LEFT);
-        });
+        return IdGenerator::next('KGT-', Kegiatan::withTrashed(), 'id_kegiatan');
     }
 }

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Berita;
+use App\Support\Sanitizer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * R2: Controller untuk manajemen artikel/berita klinik.
@@ -64,7 +66,7 @@ class BeritaController extends Controller
             'id_berita'  => $id,
             'judul'      => $request->judul,
             'slug'       => $slug,
-            'isi'        => $request->isi,
+            'isi'        => Sanitizer::html($request->isi),
             'images'     => $imgname,
             'penulis'    => Auth::user()->name,
             'status'     => $request->status,
@@ -72,6 +74,7 @@ class BeritaController extends Controller
         ]);
 
         Log::info('Artikel baru dibuat', ['id' => $id, 'judul' => $request->judul, 'oleh' => Auth::id()]);
+        Cache::forget('home_beritas');
 
         return redirect('/admin-area/berita')->with('success', 'Berhasil menambahkan artikel.');
     }
@@ -96,7 +99,7 @@ class BeritaController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id_berita'  => 'required',
+            'id_berita'  => 'required|exists:beritas,id_berita',
             'judul'      => 'required|max:200',
             'isi'        => 'required',
             'status'     => 'required|in:draft,published',
@@ -108,7 +111,7 @@ class BeritaController extends Controller
 
         $data = [
             'judul'      => $request->judul,
-            'isi'        => $request->isi,
+            'isi'        => Sanitizer::html($request->isi),
             'status'     => $request->status,
             'tgl_terbit' => $request->tgl_terbit,
         ];
@@ -122,6 +125,7 @@ class BeritaController extends Controller
         }
 
         $berita->update($data);
+        Cache::forget('home_beritas');
 
         return redirect('/admin-area/berita')->with('success', 'Berhasil mengedit artikel.');
     }
@@ -135,6 +139,7 @@ class BeritaController extends Controller
         $berita->delete();
 
         Log::info('Artikel dihapus (soft delete)', ['id' => decrypt($id), 'oleh' => Auth::id()]);
+        Cache::forget('home_beritas');
 
         return redirect('/admin-area/berita')->with('success', 'Artikel berhasil dihapus.');
     }
@@ -147,6 +152,8 @@ class BeritaController extends Controller
         $berita = Berita::where('id_berita', decrypt($id))->firstOrFail();
         $berita->status = $berita->status === 'published' ? 'draft' : 'published';
         $berita->save();
+
+        Cache::forget('home_beritas');
 
         return redirect()->back()->with('success', 'Status artikel berhasil diubah.');
     }

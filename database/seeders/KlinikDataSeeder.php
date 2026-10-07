@@ -81,7 +81,7 @@ class KlinikDataSeeder extends Seeder
                 ],
                 [
                     'id_dokter'     => 'DOK-002',
-                    'nama_dokter'   => 'Amalia Meisyafitri, drg',
+                    'nama_dokter'   => 'DRG. Amalia Meisyafitri',
                     'no_hp_dokter'  => '08123456702',
                     'images'        => '1673007237-DOK-002.jpg',
                     'email_dokter'  => 'amalia@famdentalcare.com',

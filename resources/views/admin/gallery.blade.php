@@ -17,18 +17,11 @@
                         <label for="cari" class="col-form-label">Cari Foto</label>
                       </div>
                       <div class="col-auto">
-                        <form action="/admin-area/galeri" method="POST" enctype="multipart/form-data">
-                        @csrf
+                        <form action="/admin-area/galeri" method="GET">
                         <div class="input-group">
-                            <input required type="text" id="cari" class="form-control" name="cari" placeholder="Masukkan keyword...">
+                            <input required type="text" id="cari" class="form-control" name="cari" value="{{ request('cari') }}" placeholder="Masukkan keyword...">
                             <button class="btn btn-outline-primary" type="submit">Cari</button>
                         </div>
-                        @error('judul')
-                        <div class="form-text">
-                            <i class="ri-error-warning-line"></i>
-                            Masukkan keyword pencarian yang valid.
-                        </div>
-                        @enderror
                         </form>
                       </div>
                 </div>
@@ -48,15 +41,19 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ $data -> id_galeri}}</h5>
                     <p class="card-text">
-                        {!! html_entity_decode($data -> judul) !!}
+                        {{ html_entity_decode($data -> judul) }}
                     </p>
                     <div class="d-flex justify-content-end gap-2 pt-2 border-top">
                         <a href="/admin-area/galeri/edit/{{ Crypt::encrypt($data->id_galeri) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bx bx-edit-alt"></i> Edit
                         </a>
-                        <a href="/admin-area/galeri/delete/{{ Crypt::encrypt($data->id_galeri) }}" onclick="return confirm('Hapus foto {{ $data->id_galeri }}?')" class="btn btn-sm btn-outline-danger">
-                            <i class="bx bx-trash"></i> Hapus
-                        </a>
+                        <form action="/admin-area/galeri/delete/{{ Crypt::encrypt($data->id_galeri) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus foto {{ $data->id_galeri }}?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bx bx-trash"></i> Hapus
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

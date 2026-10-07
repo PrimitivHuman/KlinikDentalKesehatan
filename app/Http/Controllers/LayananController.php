@@ -100,11 +100,11 @@ class LayananController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id_layanan'   => 'required',
+            'id_layanan'   => 'required|exists:layanans,id_layanan',
             'nama_layanan' => 'required|max:150',
             'deskripsi'    => 'nullable',
             'harga_mulai'  => 'nullable|numeric',
-            'harga_sampai' => 'nullable|numeric',
+            'harga_sampai' => 'nullable|numeric|gte:harga_mulai',
             'durasi'       => 'nullable|max:50',
             'ikon'         => 'nullable|max:50',
             'urutan'       => 'nullable|integer|min:0',

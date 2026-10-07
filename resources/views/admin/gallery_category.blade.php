@@ -16,21 +16,14 @@
                     <div class="d-flex flex-row-reverse">
                         <div class="row mb-4">
                             <div class="col-auto">
-                                <label for="cari" class="col-form-label">Cari Akun</label>
+                                <label for="cari" class="col-form-label">Cari Kategori</label>
                               </div>
                               <div class="col-auto">
-                                <form action="/admin-area/kategori-galeri" method="POST" enctype="multipart/form-data">
-                                @csrf
+                                <form action="/admin-area/kategori-galeri" method="GET">
                                 <div class="input-group">
-                                    <input required type="text" id="cari" class="form-control" name="cari" placeholder="Masukkan keyword...">
+                                    <input required type="text" id="cari" class="form-control" name="cari" value="{{ request('cari') }}" placeholder="Masukkan keyword...">
                                     <button class="btn btn-outline-primary" type="submit">Cari</button>
                                 </div>
-                                @error('judul')
-                                <div class="form-text">
-                                    <i class="ri-error-warning-line"></i>
-                                    Masukkan keyword pencarian yang valid.
-                                </div>
-                                @enderror
                                 </form>
                               </div>
                         </div>
@@ -66,10 +59,13 @@
                             <a class="btn btn-sm btn-primary" href="/admin-area/kategori-galeri/edit/{{ Crypt::encrypt($data->id_kategori) }}">
                                 <span class="align-middle">Edit</span>
                             </a>
-                            <button onclick="if (confirm('Hapus kategori {{ addslashes($data->nama_kategori) }}')) { location.replace('/admin-area/kategori-galeri/delete/{{ Crypt::encrypt($data->id_kategori) }}') }" class="btn btn-danger btn-sm">
-                                <i class="align-middle" data-feather="trash-2"></i>
-                                <span class="align-middle">Hapus</span>
-                            </button>
+                            <form action="/admin-area/kategori-galeri/delete/{{ Crypt::encrypt($data->id_kategori) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus kategori {{ addslashes($data->nama_kategori) }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <span class="align-middle">Hapus</span>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach

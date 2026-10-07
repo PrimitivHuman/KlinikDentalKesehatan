@@ -3,8 +3,8 @@
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"><a href="/admin-area"
-                class="a-breadcrumbs">Beranda</a> / <a href="/admin-area/kategori-galeri" class="a-breadcrumbs">Data
-                Akun</a> / </span>Baru</h4>
+                class="a-breadcrumbs">Beranda</a> / <a href="/admin-area/akun" class="a-breadcrumbs">Data
+                Akun</a> / </span>Tambah Akun Baru</h4>
     <div class="card">
         <h5 class="card-header">
             Tambah Pengguna Baru
@@ -45,7 +45,7 @@
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Password</label>
                             <div class="col-md-9">
-                                <input class="form-control" type="password" name="password" required />
+                                <input class="form-control" type="password" name="password" placeholder="Minimal 8 karakter" required />
                                 @error('password')
                                 <div id="defaultFormControlHelp" class="form-text">
                                     {{ $message }}
@@ -58,7 +58,7 @@
                         <div class="mb-3 row">
                             <label class="col-md-3 col-form-label">Retype Password</label>
                             <div class="col-md-9">
-                                <input class="form-control" type="password" name="retype_password" required />
+                                <input class="form-control" type="password" name="retype_password" placeholder="Ulangi kata sandi" required />
                                 @error('password')
                                 <div id="defaultFormControlHelp" class="form-text">
                                     {{ $message }}

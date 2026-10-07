@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kegiatan;
+use Illuminate\Support\Facades\Cache;
 
 class KegiatanController extends Controller
 {
@@ -33,6 +34,7 @@ class KegiatanController extends Controller
 
         if ($query) {
             $img->move(public_path('/img/activity'), $imgname);
+            Cache::forget('home_kegiatans');
             return redirect('/admin-area/kegiatan')->with('success', 'Berhasil menambahkan data agenda kegiatan.');
         } else {
             return redirect('/admin-area/kegiatan')->with('error', 'Terjadi kesalahan dalam menambahkan agenda kegiatan.');
@@ -88,6 +90,7 @@ class KegiatanController extends Controller
         }
 
         $kegiatan->update($data);
+        Cache::forget('home_kegiatans');
 
         return redirect('/admin-area/kegiatan')->with('success', 'Berhasil memperbarui agenda kegiatan.');
     }
@@ -101,6 +104,7 @@ class KegiatanController extends Controller
 
         if ($kegiatan) {
             $kegiatan->delete();
+            Cache::forget('home_kegiatans');
             return redirect('/admin-area/kegiatan')->with('success', 'Berhasil menghapus agenda kegiatan.');
         } else {
             return redirect('/admin-area/kegiatan')->with('error', 'Data tidak ditemukan.');

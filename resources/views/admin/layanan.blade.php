@@ -47,20 +47,23 @@
                         {{ Str::limit(strip_tags($l->deskripsi), 80) }}
                     </p>
                     <div class="d-flex justify-content-end gap-2 pt-2 border-top">
-                        <a href="/admin-area/layanan/toggle/{{ Crypt::encrypt($l->id_layanan) }}"
-                           class="btn btn-sm btn-outline-{{ $l->aktif ? 'secondary' : 'success' }}"
-                           title="{{ $l->aktif ? 'Nonaktifkan' : 'Aktifkan' }}">
-                            <i class="bx bx-{{ $l->aktif ? 'hide' : 'show' }}"></i>
-                        </a>
+                        <form action="/admin-area/layanan/toggle/{{ Crypt::encrypt($l->id_layanan) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-{{ $l->aktif ? 'secondary' : 'success' }}" title="{{ $l->aktif ? 'Nonaktifkan' : 'Aktifkan' }}">
+                                <i class="bx bx-{{ $l->aktif ? 'hide' : 'show' }}"></i>
+                            </button>
+                        </form>
                         <a href="/admin-area/layanan/edit/{{ Crypt::encrypt($l->id_layanan) }}"
                            class="btn btn-sm btn-outline-primary">
                             <i class="bx bx-edit-alt"></i> Edit
                         </a>
-                        <a href="/admin-area/layanan/delete/{{ Crypt::encrypt($l->id_layanan) }}"
-                           onclick="return confirm('Hapus layanan \'{{ $l->nama_layanan }}\'?')"
-                           class="btn btn-sm btn-outline-danger">
-                            <i class="bx bx-trash"></i>
-                        </a>
+                        <form action="/admin-area/layanan/delete/{{ Crypt::encrypt($l->id_layanan) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus layanan \'{{ addslashes($l->nama_layanan) }}\'?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

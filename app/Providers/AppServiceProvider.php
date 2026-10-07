@@ -27,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
         // Mencegah lazy loading, mass assignment tanpa fillable, dll.
         Model::shouldBeStrict(! app()->isProduction());
 
-        // Force HTTPS di production
-        if (app()->isProduction()) {
+        // Force HTTPS di production atau saat diakses via tunnel (Cloudflare Tunnel / Ngrok)
+        if (app()->isProduction() || request()->isSecure() || request()->header('x-forwarded-proto') === 'https' || str_contains(request()->header('host', ''), 'trycloudflare.com')) {
             URL::forceScheme('https');
         }
     }
