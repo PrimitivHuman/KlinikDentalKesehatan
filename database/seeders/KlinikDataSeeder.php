@@ -152,6 +152,72 @@ class KlinikDataSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('✅ Data klinik dasar (Tentang, Kategori, Galeri, Dokter) berhasil disiapkan.');
+        // ── Berita / Artikel ────────────────────────────────────────────────
+        if (DB::table('beritas')->count() === 0) {
+            DB::table('beritas')->insert([
+                [
+                    'id_berita'   => 'BRT-001',
+                    'judul'       => 'Pentingnya Perawatan Scaling Gigi Secara Berkala Setiap 6 Bulan',
+                    'slug'        => 'pentingnya-perawatan-scaling-gigi-secara-berkala-setiap-6-bulan',
+                    'isi'         => '<p>Scaling gigi adalah prosedur pembersihan karang gigi yang menumpuk pada permukaan gigi hingga di bawah garis gusi. Karang gigi atau kalkulus tidak dapat dibersihkan hanya dengan menyikat gigi biasa.</p><p>Dokter gigi merekomendasikan pembersihan karang gigi minimal setiap 6 bulan sekali guna mencegah radang gusi (gingivitis), bau mulut tak sedap, serta kerusakan tulang penyangga gigi.</p>',
+                    'images'      => '1791204021-BRT-001.jpg',
+                    'penulis'     => 'DRG. Martiyanti Doanna',
+                    'status'      => 'published',
+                    'tgl_terbit'  => '2026-10-01',
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ],
+                [
+                    'id_berita'   => 'BRT-002',
+                    'judul'       => 'Mengenal Perbedaan Tambal Gigi Komposit dan Perawatan Saluran Akar',
+                    'slug'        => 'mengenal-perbedaan-tambal-gigi-komposit-dan-perawatan-saluran-akar',
+                    'isi'         => '<p>Banyak pasien bertanya kapan gigi hanya perlu ditambal biasa dan kapan memerlukan perawatan saluran akar (PSA). Jika lubang masih di lapisan email atau dentin, tambalan komposit estetis sewarna gigi sudah cukup.</p><p>Namun, jika infeksi telah mencapai ruang pulpa saraf gigi, perawatan saluran akar mutlak dilakukan sebelum gigi ditambal permanen atau diberi mahkota jaket (crown).</p>',
+                    'images'      => null,
+                    'penulis'     => 'DRG. Munawar Chalid',
+                    'status'      => 'published',
+                    'tgl_terbit'  => '2026-10-03',
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ],
+                [
+                    'id_berita'   => 'BRT-003',
+                    'judul'       => 'Panduan Menjaga Kebersihan Gigi Saat Menggunakan Kawat Gigi (Behel)',
+                    'slug'        => 'panduan-menjaga-kebersihan-gigi-saat-menggunakan-kawat-gigi-behel',
+                    'isi'         => '<p>Menggunakan kawat gigi ortodonti membutuhkan komitmen kebersihan ekstra. Sisa makanan sangat mudah terselip di sela bracket dan kawat archwire.</p><p>Gunakan sikat gigi khusus ortodonti, sikat interdental (interdental brush), serta dental floss secara rutin agar tidak timbul bercak putih (white spot) atau radang gusi selama masa perawatan.</p>',
+                    'images'      => null,
+                    'penulis'     => 'DRG. Amalia Meisyafitri',
+                    'status'      => 'published',
+                    'tgl_terbit'  => '2026-10-05',
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ],
+            ]);
+        }
+
+        // ── Kegiatan / Agenda ───────────────────────────────────────────────
+        if (DB::table('kegiatans')->count() === 0) {
+            DB::table('kegiatans')->insert([
+                [
+                    'id_kegiatan'        => 'KGT-001',
+                    'judul_kegiatan'     => 'Penyuluhan & Pemeriksaan Kesehatan Gigi Anak Sekolah Dasar',
+                    'deskripsi_kegiatan' => '<p>Tim dokter gigi Klinik FAM Dental Care mengadakan kegiatan edukasi cara menyikat gigi yang baik dan benar serta pemeriksaan gigi gratis bagi 150 siswa sekolah dasar.</p>',
+                    'tgl_kegiatan'       => '2026-10-15',
+                    'images'             => '1791204059-KGT-001.png',
+                    'created_at'         => now(),
+                    'updated_at'         => now(),
+                ],
+                [
+                    'id_kegiatan'        => 'KGT-002',
+                    'judul_kegiatan'     => 'Bakti Sosial Senyum Sehat Bersama Komunitas Lansia',
+                    'deskripsi_kegiatan' => '<p>Pelayanan konsultasi kesehatan gigi mulut, pembersihan karang gigi gratis, dan penyuluhan perawatan gigi tiruan bagi komunitas lansia wilayah Bandung.</p>',
+                    'tgl_kegiatan'       => '2026-10-22',
+                    'images'             => '1789790067-KGT-001.jpg',
+                    'created_at'         => now(),
+                    'updated_at'         => now(),
+                ],
+            ]);
+        }
+
+        $this->command->info('✅ Data klinik dasar (Tentang, Kategori, Galeri, Dokter, Berita, Kegiatan) berhasil disiapkan.');
     }
 }
